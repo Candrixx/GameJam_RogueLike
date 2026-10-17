@@ -1,3 +1,4 @@
+class_name Character
 extends CharacterBody2D
 
 @export var speed = 100
@@ -10,8 +11,18 @@ func _physics_process(delta: float) -> void:
 	if attack:
 		attack_animation()
 	
-	var direction = Input.get_vector("left", "right", "up", "down")
-	velocity = velocity.lerp(direction * speed, accelaration * delta)
+	var direction = Vector2.ZERO
+	
+	if Input.is_action_pressed("right"):
+		direction.x = 1
+	elif Input.is_action_pressed("left"):
+		direction.x = -1
+	elif Input.is_action_pressed("down"):
+		direction.y = 1
+	elif Input.is_action_pressed("up"):
+		direction.y = -1
+	
+	velocity = velocity.lerp(speed * direction, delta * accelaration)
 	
 	move_and_slide()
 
