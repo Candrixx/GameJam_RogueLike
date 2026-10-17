@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://ee7pker6lo33"]
+
+[ext_resource type="PackedScene" uid="uid://stoo4jjwuwm8" path="res://Scenes/maps/map_debbug.tscn" id="1_5hcud"]
+[ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="2_s4c03"]
+
+[node name="level_debbug" type="Node2D"]
+
+[node name="Camera2D" type="Camera2D" parent="."]
+offset = Vector2(0.015, 0)
+zoom = Vector2(4.835, 3.445)
+
+[node name="map_debbug" parent="." instance=ExtResource("1_5hcud")]
+position = Vector2(-71, -63)
+
+[node name="character" parent="." instance=ExtResource("2_s4c03")]
+position = Vector2(-15, -10)
