@@ -17,10 +17,12 @@ func _physics_process(delta: float) -> void:
 		direction.x = 1
 	elif Input.is_action_pressed("left"):
 		direction.x = -1
-	elif Input.is_action_pressed("down"):
-		direction.y = 1
-	elif Input.is_action_pressed("up"):
-		direction.y = -1
+	
+	if direction.x == 0:
+		if Input.is_action_pressed("down"):
+			direction.y = 1
+		elif Input.is_action_pressed("up"):
+			direction.y = -1
 	
 	velocity = velocity.lerp(speed * direction, delta * accelaration)
 	
