@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://dw51g48oettth"]
 
-[ext_resource type="Script" uid="uid://chda42hil7rq7" path="res://Scripts/visual_novel.gd" id="1_hr8yh"]
+[ext_resource type="Script" uid="uid://chda42hil7rq7" path="res://Scripts/dialogue.gd" id="1_7bc7q"]
 
-[node name="NovelaVisual" type="CanvasLayer" unique_id=2066761522]
-script = ExtResource("1_hr8yh")
+[node name="Dialogues" type="CanvasLayer" unique_id=2066761522]
+script = ExtResource("1_7bc7q")
 
 [node name="Personaje" type="TextureRect" parent="." unique_id=978805687]
 offset_right = 40.0
