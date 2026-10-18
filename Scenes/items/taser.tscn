@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://dlgmrmhie0yx0"]
+
+[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/base_item.tscn" id="1_ixxty"]
+[ext_resource type="Texture2D" uid="uid://0elmbigrctck" path="res://Sprites/magic staff 1.png" id="2_ixxty"]
+
+[node name="Taser" unique_id=311614790 instance=ExtResource("1_ixxty")]
+weapon_name = "Taser"
+
+[node name="Sprite2D" parent="." index="0" unique_id=1535842408]
+position = Vector2(-3.8146973e-06, -1.9073486e-06)
+scale = Vector2(0.050327007, 0.058832984)
+texture = ExtResource("2_ixxty")

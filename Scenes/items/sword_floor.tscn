@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://0fkgihh4nq34"]
+
+[ext_resource type="PackedScene" uid="uid://d2nat8sxwcw0w" path="res://Scenes/items/item_floor_base.tscn" id="1_n67se"]
+[ext_resource type="Texture2D" uid="uid://dd4ntfe2qq1uf" path="res://Assets/textures/temp_personaje/Spritesheet/espada.png" id="2_4rsw3"]
+[ext_resource type="PackedScene" uid="uid://1d1twb2nnlw5" path="res://Scenes/items/sword.tscn" id="2_n768t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_8itus"]
+radius = 9.0
+
+[node name="sword_floor" unique_id=552979034 instance=ExtResource("1_n67se")]
+weapon_to_equiped = ExtResource("2_n768t")
+
+[node name="CollisionShape2D" parent="." index="0" unique_id=187429384]
+shape = SubResource("CircleShape2D_8itus")
+
+[node name="Sprite2D" parent="." index="1" unique_id=1544224068]
+position = Vector2(1, 0)
+texture = ExtResource("2_4rsw3")

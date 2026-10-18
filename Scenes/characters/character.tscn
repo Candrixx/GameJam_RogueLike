@@ -1,156 +1,23 @@
-[gd_scene load_steps=9 format=3 uid="uid://diigow32cjgk0"]
+[gd_scene format=3 uid="uid://diigow32cjgk0"]
 
 [ext_resource type="Texture2D" uid="uid://cl4g2p2ewkf5u" path="res://Assets/textures/temp_personaje/Spritesheet/Caballero.png" id="1_52avm"]
 [ext_resource type="Script" uid="uid://d0iff6g5r7xqb" path="res://Scripts/character.gd" id="1_e22cc"]
-[ext_resource type="Texture2D" uid="uid://dd4ntfe2qq1uf" path="res://Assets/textures/temp_personaje/Spritesheet/espada.png" id="2_1bdar"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_70v6v"]
 size = Vector2(17.3913, 21.0405)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_e22cc"]
-size = Vector2(5, 13.5)
-
-[sub_resource type="Animation" id="Animation_2qjml"]
-resource_name = "Atque"
-length = 0.4
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Area2D:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.15, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [Vector2(0, 0), Vector2(5, -3), Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Area2D:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.15, 0.3),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [0.0, 0.661836, 0.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Area2D/CollisionShape2D:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.08, 0.19),
-"transitions": PackedFloat32Array(1, 1, 1),
-"update": 0,
-"values": [true, false, true]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Area2D:monitoring")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0.07, 0.19),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-
-[sub_resource type="Animation" id="Animation_ma1fs"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Area2D:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0, 0)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Area2D:rotation")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [0.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("Area2D/CollisionShape2D:disabled")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [true]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Area2D:monitoring")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [false]
-}
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_yscb1"]
-_data = {
-&"Atque": SubResource("Animation_2qjml"),
-&"RESET": SubResource("Animation_ma1fs")
-}
-
-[node name="character" type="CharacterBody2D"]
+[node name="character" type="CharacterBody2D" unique_id=141331846]
 collision_mask = 9
 script = ExtResource("1_e22cc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=669446425]
 texture = ExtResource("1_52avm")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=751410241]
 position = Vector2(-4.47035e-07, -3.57628e-07)
 rotation = 1.57272
 scale = Vector2(0.92, 0.760438)
 shape = SubResource("RectangleShape2D_70v6v")
 
-[node name="Area2D" type="Area2D" parent="."]
-collision_layer = 2
-collision_mask = 10
-monitoring = false
-
-[node name="Espada" type="Sprite2D" parent="Area2D"]
-position = Vector2(7, 1)
-texture = ExtResource("2_1bdar")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-light_mask = 2
-visibility_layer = 2
-position = Vector2(6, 0.75)
-shape = SubResource("RectangleShape2D_e22cc")
-disabled = true
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_yscb1")
-}
-
-[connection signal="body_entered" from="Area2D" to="." method="_on_area_2d_body_entered"]
+[node name="EquimentPoint" type="Marker2D" parent="." unique_id=530792826]
+position = Vector2(6, 5)

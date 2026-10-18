@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://cyx8q50hek6p5"]
+
+[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/base_item.tscn" id="1_v21tj"]
+[ext_resource type="Texture2D" uid="uid://c2drgnp342j06" path="res://Sprites/2.png" id="2_ui64p"]
+
+[node name="Pistol" unique_id=311614790 instance=ExtResource("1_v21tj")]
+weapon_name = "Pistol"
+
+[node name="Sprite2D" parent="." index="0" unique_id=1535842408]
+position = Vector2(0.9999943, -1.0000038)
+scale = Vector2(0.2712766, 0.2712766)
+texture = ExtResource("2_ui64p")
+hframes = 2
+vframes = 3
+frame = 1

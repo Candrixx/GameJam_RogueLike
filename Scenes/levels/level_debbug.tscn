@@ -1,16 +1,20 @@
-[gd_scene load_steps=3 format=3 uid="uid://ee7pker6lo33"]
+[gd_scene format=3 uid="uid://ee7pker6lo33"]
 
 [ext_resource type="PackedScene" uid="uid://stoo4jjwuwm8" path="res://Scenes/maps/map_debbug.tscn" id="1_5hcud"]
 [ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="2_s4c03"]
+[ext_resource type="PackedScene" uid="uid://0fkgihh4nq34" path="res://Scenes/items/sword_floor.tscn" id="3_s4c03"]
 
-[node name="level_debbug" type="Node2D"]
+[node name="level_debbug" type="Node2D" unique_id=1129882489]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1060866913]
 offset = Vector2(0.015, 0)
 zoom = Vector2(4.835, 3.445)
 
-[node name="map_debbug" parent="." instance=ExtResource("1_5hcud")]
+[node name="map_debbug" parent="." unique_id=1230438707 instance=ExtResource("1_5hcud")]
 position = Vector2(-71, -63)
 
-[node name="character" parent="." instance=ExtResource("2_s4c03")]
+[node name="character" parent="." unique_id=1701197724 instance=ExtResource("2_s4c03")]
 position = Vector2(-15, -10)
+
+[node name="sword_floor" parent="." unique_id=552979034 instance=ExtResource("3_s4c03")]
+position = Vector2(96, -74)

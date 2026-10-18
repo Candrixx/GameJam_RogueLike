@@ -3,39 +3,29 @@ extends CharacterBody2D
 
 @export var speed = 100
 @export var accelaration = 10
-@onready var animation_attack: AnimationPlayer = $AnimationPlayer
 @onready var area_hitbox: Area2D = $Area2D
+var weapon_equiped: ArmaBase = null
+@onready var point_equipment: Marker2D = $EquimentPoint
 
 func _physics_process(delta: float) -> void:
 	var attack = Input.is_action_just_pressed("attack")
-	if attack:
-		attack_animation()
+	if attack and weapon_equiped:
+		weapon_equiped.attack()
 	
-	var direction = Vector2.ZERO
 	
-	if Input.is_action_pressed("right"):
-		direction.x = 1
-	elif Input.is_action_pressed("left"):
-		direction.x = -1
-	
-	if direction.x == 0:
-		if Input.is_action_pressed("down"):
-			direction.y = 1
-		elif Input.is_action_pressed("up"):
-			direction.y = -1
-	
+	var direction := Input.get_vector("left", "right", "up", "down")
 	velocity = velocity.lerp(speed * direction, delta * accelaration)
 	
 	move_and_slide()
 
-func attack_animation():
-	if animation_attack.is_playing() and animation_attack.current_animation == "Atque":
-		return
+
+func equip_weapon(new_weapon: PackedScene):
+	if weapon_equiped:
+		weapon_equiped.queue_free()
+		
+	weapon_equiped = new_weapon.instantiate() as ArmaBase
+	if weapon_equiped:
+		point_equipment.add_child(weapon_equiped)
+		weapon_equiped.position = Vector2.ZERO
+		weapon_equiped.rotation = 0
 	
-	animation_attack.play("Atque")
-
-func _on_area_2d_body_entered(body):
-	print("Hubo contacto")
-
-func take_weapon(name, damage, frame_number):
-	pass
