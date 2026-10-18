@@ -124,23 +124,23 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_70v6v"]
-size = Vector2(204.87561, 175.12405)
+size = Vector2(261.94244, 175.12405)
 
 [node name="character" type="CharacterBody2D" unique_id=1509986388]
-y_sort_enabled = true
+position = Vector2(8, -164)
 collision_mask = 9
 script = ExtResource("1_e22cc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1794761289]
-position = Vector2(-2, -150)
+position = Vector2(-2, -52)
 sprite_frames = SubResource("SpriteFrames_hndv8")
 animation = &"Idle_Side"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1644893791]
-position = Vector2(-4.9744987, 6.2506943)
+position = Vector2(-4.9239964, 78.49196)
 rotation = 1.57272
 scale = Vector2(0.92, 0.760438)
 shape = SubResource("RectangleShape2D_70v6v")
 
 [node name="EquipmentPoint" type="Marker2D" parent="." unique_id=1323244052]
-position = Vector2(-22, -103)
+position = Vector2(-27, 5)

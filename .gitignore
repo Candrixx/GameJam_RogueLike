@@ -30,5 +30,3 @@ Thumbs.db
 *.csproj.nuget.spec.cache
 *.project.json
 project.lock.json
-
-.vscode

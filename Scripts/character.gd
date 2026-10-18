@@ -1,18 +1,16 @@
 class_name Character
 extends CharacterBody2D
 
-@export var speed = 450
-@export var accelaration = 35
+@export var speed = 500
+@export var accelaration = 50
 
 
 var weapon_equiped: ArmaBase = null
 var last_direction = Vector2.DOWN
 
+@onready var area_hitbox: Area2D = $Area2D
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
-
-func _ready() -> void:
-	add_to_group("player")
 
 func _physics_process(delta: float) -> void:
 	var attack = Input.is_action_just_pressed("attack")

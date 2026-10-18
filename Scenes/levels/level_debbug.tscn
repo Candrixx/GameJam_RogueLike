@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://ee7pker6lo33"]
 
 [ext_resource type="PackedScene" uid="uid://stoo4jjwuwm8" path="res://Scenes/maps/map_debbug.tscn" id="1_5hcud"]
-[ext_resource type="Texture2D" uid="uid://cq61ruoq5rt3x" path="res://Assets/textures/temp_mapa/Tilemap/Style A/tilemap_packed.png" id="2_cyewf"]
+[ext_resource type="Texture2D" uid="uid://bfy0f1yiwm7bc" path="res://Assets/textures/temp_mapa/Tilemap/Style A/tilemap_packed.png" id="2_cyewf"]
 [ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="2_s4c03"]
 [ext_resource type="PackedScene" uid="uid://0fkgihh4nq34" path="res://Scenes/items/sword_floor.tscn" id="3_s4c03"]
 

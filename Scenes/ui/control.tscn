@@ -1,0 +1,130 @@
+[gd_scene format=3 uid="uid://delwwmwfbjixu"]
+
+[ext_resource type="Script" uid="uid://cjgbmjqi3etl3" path="res://Scripts/ui.gd" id="1_h3gr5"]
+[ext_resource type="Texture2D" uid="uid://b3tmxavojg518" path="res://Assets/start_texture/pantalla.png" id="1_q1tuw"]
+[ext_resource type="Texture2D" uid="uid://c1i6rlmlujmw3" path="res://Assets/start_texture/logo blanco.png" id="2_h3gr5"]
+[ext_resource type="Texture2D" uid="uid://cnblpj0bohogg" path="res://Assets/start_texture/pantalla inicio gamejam SELECCION.png" id="3_no0mw"]
+[ext_resource type="Texture2D" uid="uid://cbhnpu2obt3hq" path="res://Assets/start_texture/pantalla inicio gamejam.png" id="4_wi1ys"]
+[ext_resource type="Texture2D" uid="uid://bl112a0x7f7vs" path="res://Assets/start_texture/pantalla inicio gamejam CREDITOS.png" id="5_vfjtn"]
+[ext_resource type="Texture2D" uid="uid://uox6a51fyrpi" path="res://Assets/start_texture/pantalla inicio gamejam SALIR.png" id="6_0us5w"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ty0te"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_w4mfu"]
+texture = ExtResource("3_no0mw")
+
+[node name="Control" type="Control" unique_id=1295051161]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_h3gr5")
+
+[node name="Fondo" type="TextureRect" parent="." unique_id=265644800]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_q1tuw")
+expand_mode = 1
+
+[node name="Titulo" type="TextureRect" parent="." unique_id=537349638]
+self_modulate = Color(1.380357, 1.380357, 1.380357, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 600.0
+offset_top = 35.0
+offset_right = -31.0
+offset_bottom = -326.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_h3gr5")
+expand_mode = 1
+
+[node name="CajaBotones" type="VBoxContainer" parent="." unique_id=1310627466]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -425.0
+offset_top = -53.0
+offset_right = -153.0
+offset_bottom = 118.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 23
+
+[node name="Jugar" type="Button" parent="CajaBotones" unique_id=248829038]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_ty0te")
+theme_override_styles/hover = SubResource("StyleBoxTexture_w4mfu")
+icon = ExtResource("4_wi1ys")
+
+[node name="Creditos" type="Button" parent="CajaBotones" unique_id=1639851248]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_ty0te")
+theme_override_styles/hover = SubResource("StyleBoxTexture_w4mfu")
+icon = ExtResource("5_vfjtn")
+
+[node name="Salir" type="Button" parent="CajaBotones" unique_id=352146448]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_ty0te")
+theme_override_styles/hover = SubResource("StyleBoxTexture_w4mfu")
+icon = ExtResource("6_0us5w")
+
+[node name="PanelCreditos" type="Control" parent="." unique_id=674788267]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Fondo2" type="TextureRect" parent="PanelCreditos" unique_id=732544725]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_q1tuw")
+expand_mode = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelCreditos" unique_id=612994142]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Volver" type="Button" parent="PanelCreditos" unique_id=1593249179]
+layout_mode = 0
+offset_left = 726.0
+offset_top = 490.0
+offset_right = 998.0
+offset_bottom = 526.0
+theme_override_styles/normal = SubResource("StyleBoxTexture_ty0te")
+theme_override_styles/hover = SubResource("StyleBoxTexture_w4mfu")
+icon = ExtResource("6_0us5w")
+
+[node name="CortinaTrnas" type="ColorRect" parent="." unique_id=2105946118]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[connection signal="pressed" from="CajaBotones/Jugar" to="." method="_on_jugar_pressed"]
+[connection signal="pressed" from="CajaBotones/Creditos" to="." method="_on_creditos_pressed"]
+[connection signal="pressed" from="CajaBotones/Salir" to="." method="_on_salir_pressed"]
+[connection signal="pressed" from="PanelCreditos/Volver" to="." method="_on_volver_pressed"]
