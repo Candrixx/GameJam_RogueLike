@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dw51g48oettth"]
+
+[ext_resource type="Script" uid="uid://chda42hil7rq7" path="res://Scripts/visual_novel.gd" id="1_hr8yh"]
+
+[node name="NovelaVisual" type="CanvasLayer" unique_id=2066761522]
+script = ExtResource("1_hr8yh")
+
+[node name="Personaje" type="TextureRect" parent="." unique_id=978805687]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ContDialogo" type="MarginContainer" parent="." unique_id=877816288]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Caja" type="Panel" parent="ContDialogo" unique_id=1170144186]
+layout_mode = 2
+
+[node name="MargenInt" type="MarginContainer" parent="ContDialogo" unique_id=1536095797]
+layout_mode = 2
+
+[node name="OrgaVertical" type="VBoxContainer" parent="ContDialogo/MargenInt" unique_id=795784294]
+layout_mode = 2
+
+[node name="NombrePersonaje" type="Label" parent="ContDialogo/MargenInt/OrgaVertical" unique_id=1298918396]
+layout_mode = 2
+
+[node name="Dialogo" type="RichTextLabel" parent="ContDialogo/MargenInt/OrgaVertical" unique_id=1331321731]
+layout_mode = 2

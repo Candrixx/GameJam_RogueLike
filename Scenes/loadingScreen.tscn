@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cqmuy7w4dlob8"]
+
+[ext_resource type="Script" uid="uid://c2cv5m6uxyn5t" path="res://Scripts/loading_screen.gd" id="1_p6xbs"]
+[ext_resource type="Texture2D" uid="uid://l7v43mfv86sv" path="res://Assets/start_texture/carga.png" id="1_s4m6g"]
+
+[node name="PantallaCarga" type="Control" unique_id=932664381]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p6xbs")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=333627916]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_s4m6g")
+expand_mode = 1

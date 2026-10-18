@@ -6,10 +6,7 @@ extends Control
 
 func _on_jugar_pressed() -> void:
 	cortina.mouse_filter = Control.MOUSE_FILTER_STOP
-	var tween_ida = create_tween()
-	tween_ida.tween_property(cortina, "modulate:a", 1.0, 0.4)
-	await tween_ida.finished
-	get_tree().change_scene_to_file("res://Scenes/maps/map_labyrinth.tscn")
+	get_tree().change_scene_to_file("res://Scenes/loadingScreen.tscn")
 
 
 
