@@ -17,6 +17,14 @@ enum State { PATROL, WAIT, CHASE, SEARCH }
 @export var search_timeout: float = 4.0
 @export var lost_sight_grace: float = 3
 
+# Variables de knockback
+var knockback_velocity: Vector2 = Vector2.ZERO
+@export var knockback_decay: float = 800.0
+
+# Vida del enemigo
+@export var life = 999
+var is_dead = false
+
 # Pausas de espera
 @export var wait_chance: float = 0.5
 @export var wait_min: float = 1.0
@@ -42,9 +50,22 @@ func _ready() -> void:
 	_pick_patrol_target()
 	animated_sprite = find_child("*AnimatedSprite2D*", true, false) as AnimatedSprite2D
 
+	add_to_group("enemy")
+
 func _physics_process(delta: float) -> void:
+	if is_dead:
+		return
+	
 	_player = get_tree().get_first_node_in_group(player_group)
 	var sees_player := _player != null and can_see_player(_player)
+
+	if knockback_velocity.length() > 10.0:
+		velocity = knockback_velocity
+		knockback_velocity = knockback_velocity.move_toward(Vector2.ZERO, knockback_decay * delta)
+		move_and_slide()
+		return
+	else:
+		knockback_velocity = Vector2.ZERO
 
 	match state:
 		State.PATROL:
@@ -174,6 +195,38 @@ func _move_toward_point(target: Vector2, speed: float, delta: float) -> void:
 	velocity = velocity.move_toward(dir * speed, acceleration * delta)
 	_facing_from_vector(dir)
 
+# Knockback
+
+func apply_knockback(force: Vector2) -> void:
+	knockback_velocity = force
+
+# Daño
+
+func take_damage(damage: int) -> void:
+	if is_dead:
+		return
+
+	life -= damage
+	print(self.name, " remaining life: ", life)
+
+	if life <= 0:
+		die()
+
+func die() -> void:
+	is_dead = true
+	velocity = Vector2.ZERO
+	knockback_velocity = Vector2.ZERO
+
+	var collider = find_child("*CollisionShape2D*", true, false) as CollisionShape2D
+	if collider:
+		collider.set_deferred("disabled", true)
+
+	if animated_sprite:
+		var tween = create_tween().set_parallel(true)
+		tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.35)
+
+		await tween.finished
+
 # Facing
 
 func _facing_from_vector(v: Vector2) -> void:
@@ -192,10 +245,10 @@ func _update_enemy_sprite() -> void:
 		animated_sprite.play("walk_down")
 	elif facing_dir == Vector2.UP:
 		animated_sprite.play("walk_up")
-	elif facing_dir == Vector2.LEFT:
-		animated_sprite.play("walk_left")
-	elif facing_dir == Vector2.RIGHT:
-		animated_sprite.play("walk_right")
+	# elif facing_dir == Vector2.LEFT:
+	# 	animated_sprite.play("walk_left")
+	# elif facing_dir == Vector2.RIGHT:
+	# 	animated_sprite.play("walk_right")
 
 func _facing_from_angle(a: float) -> void:
 	_facing_from_vector(Vector2(cos(a), sin(a)))

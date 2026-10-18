@@ -3,7 +3,6 @@ class_name ItemFloor
 
 @export var weapon_to_equiped: PackedScene
 
-@onready var sprite = $Sprite2D
 var character_in = null
 var can_take = false
 
