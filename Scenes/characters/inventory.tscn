@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://f03n1eu875cx"]
+
+[ext_resource type="Script" uid="uid://cf65jjivdfsol" path="res://canvas_layer.gd" id="1_vrcia"]
+
+[node name="Inventory" type="CanvasLayer"]
+script = ExtResource("1_vrcia")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 2.0
+offset_top = 606.0
+offset_right = 42.0
+offset_bottom = 646.0
+scale = Vector2(3.64587, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2

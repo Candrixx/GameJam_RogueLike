@@ -3,6 +3,7 @@ extends CharacterBody2D
 
 @export var speed = 450
 @export var accelaration = 35
+@export var inventory_ui: CanvasLayer
 
 
 var weapon_equiped: ArmaBase = null
@@ -10,6 +11,13 @@ var last_direction = Vector2.DOWN
 
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+
+func _ready() -> void:
+	if inventory_ui:
+		inventory_ui.weapon_selected.connect(_on_inventory_weapon_selected)
+		
+func _on_inventory_weapon_selected(new_weapon: PackedScene):
+	equip_weapon(new_weapon)
 
 func _physics_process(delta: float) -> void:
 	var attack = Input.is_action_just_pressed("attack")

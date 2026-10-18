@@ -1,18 +1,18 @@
-[gd_scene format=3 uid="uid://c0dvexjna243s"]
+[gd_scene load_steps=3 format=3 uid="uid://c0dvexjna243s"]
 
 [ext_resource type="Script" uid="uid://d4lq7l4ipxep6" path="res://Scripts/base_item.gd" id="1_f0trn"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_s2dp6"]
 
-[node name="base_item" type="Area2D" unique_id=311614790]
-scale = Vector2(32, 32)
+[node name="base_item" type="Area2D"]
+scale = Vector2(8, 8)
 collision_layer = 2
 collision_mask = 12
 script = ExtResource("1_f0trn")
 
-[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1535842408]
+[node name="Sprite2D" type="Sprite2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=620744068]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_s2dp6")
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -26,5 +26,9 @@ func _input(event: InputEvent) -> void:
 func take_weapon():
 	print("Tomando Arma")
 	if character_in and weapon_to_equiped:
-		character_in.equip_weapon(weapon_to_equiped)
+		if character_in.inventory_ui:
+			var weapon_instant = weapon_to_equiped.instantiate() 
+			var weapon_sprite = weapon_instant.get_node_or_null("Sprite2D")
+			character_in.inventory_ui.add_weapon(weapon_sprite.texture, weapon_to_equiped)
+			character_in.equip_weapon(weapon_to_equiped)
 		queue_free()
