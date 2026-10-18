@@ -52,7 +52,11 @@ script = ExtResource("1_ixlo8")
 
 [node name="PointLight2D" type="PointLight2D" parent="." unique_id=299396726]
 position = Vector2(25, -18)
+scale = Vector2(1.5, 1.5)
+shadow_enabled = true
+shadow_filter = 2
 texture = ExtResource("3_n482i")
+texture_scale = 1.5
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="PointLight2D" unique_id=1172206917]
 libraries/ = SubResource("AnimationLibrary_38s6n")

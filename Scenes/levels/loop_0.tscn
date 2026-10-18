@@ -1,17 +1,38 @@
 [gd_scene format=3 uid="uid://0cwgv3o61yst"]
 
-[ext_resource type="Script" uid="uid://43v5t1nq3s4c" path="res://Scenes/levels/camera_2d.gd" id="1_23d4p"]
 [ext_resource type="PackedScene" uid="uid://c5k80o020nirp" path="res://Scenes/maps/map_labyrinth.tscn" id="1_yyppk"]
 [ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="2_23d4p"]
 
-[node name="Loop0" type="Node2D" unique_id=548187971]
+[sub_resource type="GDScript" id="GDScript_yyppk"]
+script/source = "extends Camera2D
 
-[node name="Node2D" parent="." unique_id=787963577 instance=ExtResource("1_yyppk")]
+@export var tile_map_layer: TileMapLayer
+
+func _ready() -> void:
+	if tile_map_layer:
+		calculat_limites_tilemap()
+
+func calculat_limites_tilemap() -> void:
+	# Obtiene el rectángulo usado por el TileMapLayer en coordenadas locales/globales
+	var rect: Rect2i = tile_map_layer.get_used_rect()
+	var tile_size: Vector2 = Vector2(tile_map_layer.tile_set.tile_size)
+	
+	# Calcula los límites en píxeles
+	limit_left = int(rect.position.x * tile_size.x * tile_map_layer.scale.x)
+	limit_top = int(rect.position.y * tile_size.y * tile_map_layer.scale.y)
+	limit_right = int((rect.position.x + rect.size.x) * tile_size.x * tile_map_layer.scale.x)
+	limit_bottom = int((rect.position.y + rect.size.y) * tile_size.y * tile_map_layer.scale.y)
+"
+
+[node name="Loop0" type="Node2D" unique_id=548187971]
 y_sort_enabled = true
 
+[node name="map_laberynth" parent="." unique_id=787963577 instance=ExtResource("1_yyppk")]
+position = Vector2(615, 452)
+
 [node name="character" parent="." unique_id=1509986388 instance=ExtResource("2_23d4p")]
-position = Vector2(612, 489)
+position = Vector2(1063, 703)
 
 [node name="Camera2D" type="Camera2D" parent="character" unique_id=1056363767]
 zoom = Vector2(0.355, 0.355)
-script = ExtResource("1_23d4p")
+script = SubResource("GDScript_yyppk")

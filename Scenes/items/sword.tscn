@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/items/base_item.tscn" id="1_7pccy"]
 [ext_resource type="Script" uid="uid://bqc8ldxcetso5" path="res://Scenes/items/sword.gd" id="2_kp4iw"]
-[ext_resource type="Texture2D" uid="uid://dd4ntfe2qq1uf" path="res://Assets/textures/temp_personaje/Spritesheet/espada.png" id="3_3rgwx"]
+[ext_resource type="Texture2D" uid="uid://dmd5drpy2wwkj" path="res://Assets/textures/temp_personaje/Spritesheet/espada.png" id="3_3rgwx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_drld8"]
 size = Vector2(5, 13)
@@ -93,6 +93,7 @@ _data = {
 }
 
 [node name="sword" unique_id=311614790 instance=ExtResource("1_7pccy")]
+scale = Vector2(24, 24)
 monitoring = false
 script = ExtResource("2_kp4iw")
 
