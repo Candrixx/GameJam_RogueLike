@@ -6,7 +6,7 @@ extends Control
 
 func _on_jugar_pressed() -> void:
 	cortina.mouse_filter = Control.MOUSE_FILTER_STOP
-	get_tree().change_scene_to_file("res://Scenes/loadingScreen.tscn")
+	get_tree().change_scene_to_file("res://Scenes/ui/loadingScreen.tscn")
 
 
 
