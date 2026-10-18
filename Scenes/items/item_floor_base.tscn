@@ -6,6 +6,7 @@
 radius = 28.79236
 
 [node name="item_floor_base" type="Area2D" unique_id=552979034]
+scale = Vector2(32, 32)
 collision_layer = 2
 script = ExtResource("1_8itus")
 

@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://ee7pker6lo33"]
 
 [ext_resource type="PackedScene" uid="uid://stoo4jjwuwm8" path="res://Scenes/maps/map_debbug.tscn" id="1_5hcud"]
-[ext_resource type="Texture2D" uid="uid://cq61ruoq5rt3x" path="res://Assets/textures/temp_mapa/Tilemap/Style A/tilemap_packed.png" id="2_cyewf"]
+[ext_resource type="Texture2D" uid="uid://bfy0f1yiwm7bc" path="res://Assets/textures/temp_mapa/Tilemap/Style A/tilemap_packed.png" id="2_cyewf"]
 [ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="2_s4c03"]
-[ext_resource type="PackedScene" uid="uid://dwqq44fgg0maj" path="res://Scenes/maps/Light.tscn" id="3_ejwmy"]
+[ext_resource type="PackedScene" uid="uid://0fkgihh4nq34" path="res://Scenes/items/sword_floor.tscn" id="3_s4c03"]
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_51a0l"]
 polygon = PackedVector2Array(-4, -4, 4, -4, 4, 4, -4, 4)
@@ -82,8 +82,7 @@ tile_set = SubResource("TileSet_oa87u")
 
 [node name="character" parent="." unique_id=1448532186 instance=ExtResource("2_s4c03")]
 position = Vector2(-15, -10)
+collision_mask = 14
 
-[node name="Light" parent="character" unique_id=1559195772 instance=ExtResource("3_ejwmy")]
-
-[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=593508320]
-color = Color(0.098724194, 0.11406522, 0.20631182, 1)
+[node name="sword_floor" parent="." unique_id=552979034 instance=ExtResource("3_s4c03")]
+position = Vector2(79, -58)

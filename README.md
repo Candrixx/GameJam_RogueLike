@@ -1,4 +1,4 @@
-# Gamejam venezuela Juega
+gi# Gamejam venezuela Juega
 Juego 2d de vista cenital
 
 ## Para usar las luces

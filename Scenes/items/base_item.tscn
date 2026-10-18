@@ -5,6 +5,7 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_s2dp6"]
 
 [node name="base_item" type="Area2D" unique_id=311614790]
+scale = Vector2(32, 32)
 collision_layer = 2
 collision_mask = 12
 script = ExtResource("1_f0trn")
