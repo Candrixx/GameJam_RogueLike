@@ -11,6 +11,9 @@ var last_direction = Vector2.DOWN
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
+func _ready() -> void:
+	add_to_group("player")
+
 func _physics_process(delta: float) -> void:
 	var attack = Input.is_action_just_pressed("attack")
 	if attack and weapon_equiped:
