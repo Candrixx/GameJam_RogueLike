@@ -61,11 +61,11 @@ polygon = PackedVector2Array(-128, -128, -128, -87.49347, 128, -87.49347, 128, -
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_b07w3"]
 polygon = PackedVector2Array(83.542145, 128, 83.54213, -87.49345, 128, -87.49344, 128, 128)
 
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qkgm6"]
-polygon = PackedVector2Array(128, 128, 87.49347, 128, 87.49347, -128, 128, -128)
-
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_rj7ki"]
-polygon = PackedVector2Array(128, 128, 87.49347, 128, 87.49347, -128, 128, -128)
+polygon = PackedVector2Array(128, -128, 87.49347, -128, 87.49347, 128, 128, 128)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_qkgm6"]
+polygon = PackedVector2Array(128, -128, 87.49347, -128, 87.49347, 128, 128, 128)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_pc5kw"]
 polygon = PackedVector2Array(128, 128, 87.49347, 128, 87.49347, -128, 128, -128)
@@ -99,14 +99,14 @@ texture_region_size = Vector2i(256, 256)
 1:1/0 = 0
 1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 2:1/0 = 0
-2:1/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_qkgm6")
+2:1/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_rj7ki")
 2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-128, -128, 128, -128, 128, 128, -128, 128)
 0:2/0 = 0
 0:2/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_hmat7")
 0:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-88.05792, -128, -128, -128, -128, 128, -87.87598, 128)
 1:2/0 = 0
 2:2/0 = 0
-2:2/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_rj7ki")
+2:2/0/occlusion_layer_0/polygon_0/polygon = SubResource("OccluderPolygon2D_qkgm6")
 2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(88.05792, 128, 128, 128, 128, -128, 87.87598, -128)
 0:3/0 = 0
 0:3/0/y_sort_origin = 100
@@ -213,7 +213,7 @@ tile_set = SubResource("TileSet_eyi13")
 position = Vector2(488, 295)
 
 [node name="Camera2D" type="Camera2D" parent="character" unique_id=1054689949]
-zoom = Vector2(0.4, 0.4)
+zoom = Vector2(0.38, 0.38)
 position_smoothing_enabled = true
 
 [node name="Light" parent="character" unique_id=1559195772 instance=ExtResource("4_pbbxr")]
@@ -251,7 +251,7 @@ sprite_frames = SubResource("SpriteFrames_uv7wo")
 animation = &"walk_up"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=650394155]
-color = Color(0.18359056, 0.18359041, 0.18359044, 1)
+color = Color(0.18717614, 0.18717614, 0.18717614, 1)
 
 [node name="sword_floor" parent="." unique_id=552979034 instance=ExtResource("5_ratia")]
 position = Vector2(1341, 431)
