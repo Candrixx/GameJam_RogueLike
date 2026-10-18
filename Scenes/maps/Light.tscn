@@ -1,151 +1,59 @@
 [gd_scene format=3 uid="uid://dwqq44fgg0maj"]
 
-[ext_resource type="Script" uid="uid://bgowltke5lsuy" path="res://Scripts/light.gd" id="1_ixlo8"]
-[ext_resource type="Texture2D" uid="uid://j80vp4t41ey4" path="res://Assets/sprites/pointLight.webp" id="1_qaibf"]
+[ext_resource type="Script" uid="uid://cqo4kyxhxlk76" path="res://Scripts/light.gd" id="1_ixlo8"]
+[ext_resource type="Texture2D" uid="uid://cex1sx1pefals" path="res://Assets/textures/light/512x512 textures (51).png" id="3_n482i"]
+[ext_resource type="Texture2D" uid="uid://c5rs35qawfn65" path="res://Assets/textures/light/512x512 textures (53).png" id="3_onetg"]
+[ext_resource type="Texture2D" uid="uid://dmnk7vc88bnoo" path="res://Assets/textures/light/512x512 textures (55).png" id="4_n482i"]
+[ext_resource type="Texture2D" uid="uid://c4q0v541kgg2j" path="res://Assets/textures/light/512x512 textures (57).png" id="5_g6t7l"]
+[ext_resource type="Texture2D" uid="uid://dyuej108mshm6" path="res://Assets/textures/light/512x512 textures (59).png" id="6_m6ie2"]
 
-[sub_resource type="Animation" id="Animation_qaibf"]
-length = 5.0
-tracks/0/type = "bezier"
+[sub_resource type="Animation" id="Animation_o8hr2"]
+length = 0.13333334
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
+tracks/0/path = NodePath(".:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(-0.5462881, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:scale:x")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(3.4, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/2/type = "bezier"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".:scale:y")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(3.353, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
-}
-tracks/3/type = "bezier"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath(".:skew")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(-0.7278023, -0.25, 0, 0.25, 0),
-"times": PackedFloat32Array(0)
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
 }
 
-[sub_resource type="Animation" id="Animation_ixlo8"]
-resource_name = "Rotation"
-length = 5.0
+[sub_resource type="Animation" id="Animation_nreki"]
+resource_name = "light_animation"
+length = 0.8000100119210779
 loop_mode = 2
-tracks/0/type = "bezier"
+step = 0.1
+tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
+tracks/0/path = NodePath(".:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(-0.5462881, -0.25, 0, 0.25, 0, 0.3647738, -0.16666667, -0.15184365, 0, 0),
-"times": PackedFloat32Array(0, 5)
-}
-tracks/1/type = "bezier"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:scale:x")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"handle_modes": PackedInt32Array(3, 0),
-"points": PackedFloat32Array(2.225, -1.25, -0.39375, 1.25, 0.39375, 3.8, -0.16666667, -0.06666665, 0, 0),
-"times": PackedFloat32Array(0, 5)
-}
-tracks/2/type = "bezier"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".:scale:y")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"handle_modes": PackedInt32Array(3, 0),
-"points": PackedFloat32Array(2.18, -1.25, -0.39174998, 1.25, 0.39174998, 3.747, -0.16666667, -0.065666676, 0, 0),
-"times": PackedFloat32Array(0, 5)
-}
-tracks/3/type = "bezier"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath(".:skew")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"handle_modes": PackedInt32Array(0, 3),
-"points": PackedFloat32Array(-0.2268928, -0.00024999998, -0.18762289, 0.00024999998, 0.18762289, 0.022689281, -1.25, -0.18762289, 1.25, 0.18762289),
-"times": PackedFloat32Array(0.0009999999, 5)
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("3_n482i"), ExtResource("3_onetg"), ExtResource("4_n482i"), ExtResource("5_g6t7l"), ExtResource("6_m6ie2")]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_tsiop"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_38s6n"]
 _data = {
-&"RESET": SubResource("Animation_qaibf"),
-&"Rotation": SubResource("Animation_ixlo8")
+&"RESET": SubResource("Animation_o8hr2"),
+&"light_animation": SubResource("Animation_nreki")
 }
 
 [node name="Light" type="Node2D" unique_id=1559195772]
 z_index = 3
 script = ExtResource("1_ixlo8")
 
-[node name="PointLight2D" type="PointLight2D" parent="." unique_id=176465122]
-position = Vector2(0, 1.9999695)
-rotation = -0.5462881
-scale = Vector2(3.4, 3.353)
-skew = -0.7278023
-energy = 0.55
-texture = ExtResource("1_qaibf")
-texture_scale = 0.12
+[node name="PointLight2D" type="PointLight2D" parent="." unique_id=299396726]
+position = Vector2(25, -18)
+texture = ExtResource("3_n482i")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PointLight2D" unique_id=1472245872]
-libraries/ = SubResource("AnimationLibrary_tsiop")
-autoplay = &"Rotation"
-
-[node name="PointLight2D2" type="PointLight2D" parent="." unique_id=1686058427]
-position = Vector2(0, 1.9999695)
-rotation = -0.5462881
-scale = Vector2(3.4, 3.353)
-skew = -0.7278023
-color = Color(0.5132329, 0.5132329, 0.5132329, 1)
-energy = 0.55
-texture = ExtResource("1_qaibf")
-texture_scale = 0.15
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PointLight2D2" unique_id=238648057]
-libraries/ = SubResource("AnimationLibrary_tsiop")
-autoplay = &"Rotation"
-
-[node name="PointLight2D3" type="PointLight2D" parent="." unique_id=1471948941]
-position = Vector2(0, 1.9999695)
-rotation = -0.5462881
-scale = Vector2(3.4, 3.353)
-skew = -0.7278023
-energy = 0.4
-blend_mode = 1
-texture = ExtResource("1_qaibf")
-texture_scale = 0.03
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="PointLight2D3" unique_id=804643110]
-libraries/ = SubResource("AnimationLibrary_tsiop")
-autoplay = &"Rotation"
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PointLight2D" unique_id=1172206917]
+libraries/ = SubResource("AnimationLibrary_38s6n")
+autoplay = &"light_animation"
