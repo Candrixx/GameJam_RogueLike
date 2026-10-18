@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://diigow32cjgk0"]
 
-[ext_resource type="Script" uid="uid://d0iff6g5r7xqb" path="res://Scripts/character.gd" id="1_e22cc"]
+[ext_resource type="Script" uid="uid://dy3p05v4v3gcp" path="res://Scripts/character.gd" id="1_e22cc"]
 [ext_resource type="Texture2D" uid="uid://c2tnjuw863550" path="res://Assets/sprites/Animation_Character_front.png" id="2_bsa6j"]
 [ext_resource type="Texture2D" uid="uid://ds7yvv6ymj0yp" path="res://Assets/sprites/Animation_Character_Idle.png" id="2_e73q4"]
 [ext_resource type="Texture2D" uid="uid://bouawtak0y434" path="res://Assets/sprites/Animation_Character_back.png" id="2_fbu5h"]
@@ -215,7 +215,7 @@ size = Vector2(204.87561, 175.12405)
 
 [node name="character" type="CharacterBody2D" unique_id=1509986388]
 y_sort_enabled = true
-collision_mask = 9
+collision_mask = 12
 script = ExtResource("1_e22cc")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1794761289]

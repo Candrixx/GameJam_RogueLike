@@ -25,6 +25,9 @@ var knockback_velocity: Vector2 = Vector2.ZERO
 @export var life = 999
 var is_dead = false
 
+# Daño
+@export var contact_damage = 1
+
 # Pausas de espera
 @export var wait_chance: float = 0.5
 @export var wait_min: float = 1.0
@@ -103,6 +106,12 @@ func _physics_process(delta: float) -> void:
 				_do_search(delta)
 
 	move_and_slide()
+
+	for i in get_slide_collision_count():
+		var collision = get_slide_collision(i)
+		var collider = collision.get_collider()
+		if collider is Character and collider.has_method("take_damage"):
+			collider.take_damage(contact_damage)
 
 # Vision
 
@@ -216,6 +225,10 @@ func die() -> void:
 	is_dead = true
 	velocity = Vector2.ZERO
 	knockback_velocity = Vector2.ZERO
+
+	var player = get_tree().get_first_node_in_group(player_group)
+	if player and player.has_method("add_kill"):
+		player.add_kill()
 
 	var collider = find_child("*CollisionShape2D*", true, false) as CollisionShape2D
 	if collider:

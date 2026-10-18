@@ -15,7 +15,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="GameJam_RogueLike"
-run/main_scene="uid://c5k80o020nirp"
+run/main_scene="uid://delwwmwfbjixu"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 

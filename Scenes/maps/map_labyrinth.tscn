@@ -217,11 +217,12 @@ zoom = Vector2(0.38, 0.38)
 position_smoothing_enabled = true
 
 [node name="Light" parent="character" unique_id=1559195772 instance=ExtResource("4_pbbxr")]
+position = Vector2(-16, -120)
 
 [node name="grunt" type="CharacterBody2D" parent="." unique_id=80181355]
 position = Vector2(-1462, -2534)
 collision_layer = 4
-collision_mask = 2
+collision_mask = 3
 script = ExtResource("7_n257l")
 life = 50
 
@@ -237,7 +238,7 @@ animation = &"walk_down"
 [node name="longboi" type="CharacterBody2D" parent="." unique_id=81435098]
 position = Vector2(-944, -2530)
 collision_layer = 4
-collision_mask = 2
+collision_mask = 3
 script = ExtResource("7_n257l")
 life = 75
 
@@ -251,7 +252,7 @@ sprite_frames = SubResource("SpriteFrames_uv7wo")
 animation = &"walk_up"
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=650394155]
-color = Color(0.18717614, 0.18717614, 0.18717614, 1)
+color = Color(0.23392546, 0.23392546, 0.23392543, 1)
 
 [node name="sword_floor" parent="." unique_id=552979034 instance=ExtResource("5_ratia")]
 position = Vector2(1341, 431)
