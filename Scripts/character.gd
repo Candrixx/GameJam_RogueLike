@@ -1,21 +1,29 @@
 class_name Character
 extends CharacterBody2D
 
-@export var speed = 500
-@export var accelaration = 50
+@export var speed = 450
+@export var accelaration = 35
 
+@export var life = 100
 
 var weapon_equiped: ArmaBase = null
 var last_direction = Vector2.DOWN
+var is_attacking = false
 
-@onready var area_hitbox: Area2D = $Area2D
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
+func _ready() -> void:
+	add_to_group("player")
+
 func _physics_process(delta: float) -> void:
 	var attack = Input.is_action_just_pressed("attack")
+	
 	if attack and weapon_equiped:
-		weapon_equiped.attack()
+		attacking(weapon_equiped.weapon_name)
+
+	if is_attacking:
+		return
 	
 	
 	var direction := Input.get_vector("left", "right", "up", "down")
@@ -41,6 +49,14 @@ func play_animation(direction: Vector2, prefix: String):
 	elif direction.y > 0:
 		animated_sprite_2d.play(prefix + "_Front")
 
+func attacking(suffix: String) -> void:
+	is_attacking = true
+	weapon_equiped.enable_hitbox()
+	animated_sprite_2d.play("Attack_" + suffix)
+	await animated_sprite_2d.animation_finished
+	is_attacking = false
+	weapon_equiped.disable_hitbox()
+
 func equip_weapon(new_weapon: PackedScene):
 	if weapon_equiped:
 		weapon_equiped.queue_free()
@@ -50,4 +66,3 @@ func equip_weapon(new_weapon: PackedScene):
 		point_equipment.add_child(weapon_equiped)
 		weapon_equiped.position = Vector2.ZERO
 		weapon_equiped.rotation = 0
-	
