@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://diigow32cjgk0"]
+[gd_scene load_steps=33 format=3 uid="uid://diigow32cjgk0"]
 
 [ext_resource type="Script" uid="uid://dy3p05v4v3gcp" path="res://Scripts/character.gd" id="1_e22cc"]
 [ext_resource type="Texture2D" uid="uid://c2tnjuw863550" path="res://Assets/sprites/Animation_Character_front.png" id="2_bsa6j"]
@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://bouawtak0y434" path="res://Assets/sprites/Animation_Character_back.png" id="2_fbu5h"]
 [ext_resource type="Texture2D" uid="uid://bj7kvch6oopn1" path="res://Assets/sprites/Animation_Character_Attack_Side.png" id="2_odp46"]
 [ext_resource type="Texture2D" uid="uid://cnyd5c37kqshd" path="res://Assets/sprites/Animation_Character_Dead.png" id="3_1vi6t"]
-[ext_resource type="Texture2D" uid="uid://rbb4hdm6e5ir" path="res://Assets/sprites/Animation_attack.png" id="3_s3wkk"]
+[ext_resource type="Texture2D" uid="uid://bns827upwiuxl" path="res://Assets/sprites/Animation_attack.png" id="3_s3wkk"]
 [ext_resource type="Texture2D" uid="uid://bopbjdcnewjno" path="res://Assets/sprites/Animation_Character_side.png" id="4_e73q4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gehew"]
@@ -109,7 +109,7 @@ animations = [{
 "duration": 2.0,
 "texture": SubResource("AtlasTexture_r5olr")
 }],
-"loop": 0,
+"loop": false,
 "name": &"Attack_Baton",
 "speed": 8.0
 }, {
@@ -120,7 +120,7 @@ animations = [{
 "duration": 2.0,
 "texture": SubResource("AtlasTexture_3j2sg")
 }],
-"loop": 0,
+"loop": false,
 "name": &"Attack_Knuckles",
 "speed": 4.0
 }, {
@@ -140,7 +140,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_i8qfm")
 }],
-"loop": 0,
+"loop": false,
 "name": &"Die",
 "speed": 10.0
 }, {
@@ -148,7 +148,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mhgjj")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Idle_Back",
 "speed": 5.0
 }, {
@@ -156,7 +156,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ejagc")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Idle_Front",
 "speed": 5.0
 }, {
@@ -164,7 +164,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pfvjg")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Idle_Side",
 "speed": 5.0
 }, {
@@ -178,7 +178,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_s3wkk")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Walk_Back",
 "speed": 5.0
 }, {
@@ -192,7 +192,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_e73q4")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Walk_Front",
 "speed": 5.0
 }, {
@@ -206,33 +206,33 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ucmv1")
 }],
-"loop": 1,
+"loop": true,
 "name": &"Walk_Side",
 "speed": 5.0
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_70v6v"]
-size = Vector2(204.87561, 175.12405)
+size = Vector2(204.876, 175.124)
 
-[node name="character" type="CharacterBody2D" unique_id=1509986388]
+[node name="character" type="CharacterBody2D"]
 y_sort_enabled = true
 collision_mask = 12
 script = ExtResource("1_e22cc")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1794761289]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-2, -150)
 sprite_frames = SubResource("SpriteFrames_hndv8")
 animation = &"Attack_Knuckles"
 frame = 1
 frame_progress = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1644893791]
-position = Vector2(-4.9744987, 6.2506943)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-4.9745, 6.25069)
 rotation = 1.57272
 scale = Vector2(0.92, 0.760438)
 shape = SubResource("RectangleShape2D_70v6v")
 
-[node name="EquipmentPoint" type="Marker2D" parent="." unique_id=1323244052]
+[node name="EquipmentPoint" type="Marker2D" parent="."]
 position = Vector2(7, -55)
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

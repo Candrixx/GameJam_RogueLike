@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Who pulls the trigger"
 run/main_scene="uid://delwwmwfbjixu"
-config/features=PackedStringArray("4.7", "GL Compatibility")
+config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="uid://drg4lkpwyxslq"
 
 [autoload]
@@ -86,4 +86,4 @@ interact={
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.054934837, 0.054933608, 0.06839919, 1)
+environment/defaults/default_clear_color=Color(0.0549348, 0.0549336, 0.0683992, 1)
