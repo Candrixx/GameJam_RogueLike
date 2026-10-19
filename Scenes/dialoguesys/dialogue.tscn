@@ -10,8 +10,16 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="ContDialogo" type="MarginContainer" parent="." unique_id=877816288]
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = -1
+anchor_top = 0.74700004
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -0.056030273
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="TextureRect" type="TextureRect" parent="ContDialogo" unique_id=959282253]
+layout_mode = 2
 
 [node name="Caja" type="Panel" parent="ContDialogo" unique_id=1170144186]
 layout_mode = 2

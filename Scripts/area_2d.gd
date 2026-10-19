@@ -1,15 +1,17 @@
 extends Area2D
 
-# Quemamos el arreglo estático en la memoria del nodo
-var dialogos_tutorial = [
-	"Sistema de traje iniciado. Soporte vital estable.",
-	"Usa [W, A, S, D] para calibrar los motores de movimiento.",
-    "Detectando anomalías en el sector contiguo... ten cuidado."
-]
+# Al usar @export_multiline, Godot creará una caja de texto grande en el Inspector 
+# que te permitirá presionar 'Enter' y escribir párrafos completos cómodamente.
+@export_multiline var texto_del_personaje: String = "Escribe aquí..."
+
+var ya_activado: bool = false 
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.name == "Player":
-		set_deferred("monitoring", false) # Apagamos el área matemáticamente
+	if ya_activado: 
+		return 
 		
-		# Le aventamos el arreglo al Singleton. Él se encarga de pausar el juego.
-		DialogSystem.iniciar_conversacion(dialogos_tutorial)
+	if body.name == "character":
+		ya_activado = true 
+		
+		# En lugar del texto de prueba, enviamos la variable al Singleton
+		DialogSystem.mostrar_texto(texto_del_personaje)

@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://cw8fm13sm2wb7"]
+
+[ext_resource type="Script" uid="uid://dnjcgjjlt2rcg" path="res://Scripts/dialog_system.gd" id="1_qhxk1"]
+[ext_resource type="Texture2D" uid="uid://d1dw6rk2dllan" path="res://Assets/start_texture/barra_de_texto_NORMAL_recortado-01.png" id="2_fi2ck"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kpd2b"]
+texture = ExtResource("2_fi2ck")
+
+[node name="DialogSystem" type="CanvasLayer" unique_id=167942283]
+layer = 10
+script = ExtResource("1_qhxk1")
+
+[node name="Caja" type="Panel" parent="." unique_id=1966018532]
+anchors_preset = -1
+anchor_left = -0.010000001
+anchor_top = 0.70400006
+anchor_right = 1.016
+anchor_bottom = 1.0
+offset_left = -0.47999954
+offset_top = -0.19204712
+offset_right = 0.56799316
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_kpd2b")
+
+[node name="Texto" type="RichTextLabel" parent="Caja" unique_id=1282797472]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.068
+anchor_top = 0.21400002
+anchor_right = 0.929
+anchor_bottom = 0.776
+offset_left = 26.555992
+offset_top = 13.0559845
+offset_right = -0.007080078
+offset_bottom = -0.09602356
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 25
