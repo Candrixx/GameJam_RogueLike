@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d22drg181rdjs" path="res://Scripts/item_floor_base.gd" id="1_8itus"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hndv8"]
-radius = 106.0
+radius = 72.0
 
 [node name="item_floor_base" type="Area2D" unique_id=552979034]
 collision_layer = 2
@@ -13,6 +13,7 @@ script = ExtResource("1_8itus")
 shape = SubResource("CircleShape2D_hndv8")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1544224068]
+scale = Vector2(0.45, 0.45)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]
 [connection signal="body_exited" from="." to="." method="_on_body_exited"]

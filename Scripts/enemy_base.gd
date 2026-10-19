@@ -227,11 +227,43 @@ func take_damage(damage: int, attacker: Node2D = null) -> void:
 	
 	if attacker:
 		_last_known_pos = attacker.global_position
+		if attacker.has_method("register_damage_dealt"):
+			attacker.register_damage_dealt(damage)
 	
 	_enter_chase()
+	_spawn_hit_visuals()
 
 	if life <= 0:
 		die()
+
+func _spawn_hit_visuals() -> void:
+	# 1. Red flash + squash/shake on sprite (no percentage or health bar)
+	if animated_sprite:
+		var base_scale := animated_sprite.scale
+		var tween := create_tween()
+		animated_sprite.modulate = Color(2.4, 0.22, 0.22, 1.0)
+		tween.tween_property(animated_sprite, "scale", base_scale * Vector2(1.16, 0.86), 0.05)
+		tween.parallel().tween_property(animated_sprite, "modulate", Color(1.0, 0.35, 0.35, 1.0), 0.08)
+		tween.tween_property(animated_sprite, "scale", base_scale, 0.10).set_trans(Tween.TRANS_BOUNCE)
+		tween.parallel().tween_property(animated_sprite, "modulate", Color.WHITE, 0.12)
+
+	# 2. Somber blood / dark impact splatter particles
+	var particles := CPUParticles2D.new()
+	particles.position = Vector2(0, -20)
+	particles.emitting = true
+	particles.one_shot = true
+	particles.amount = 16
+	particles.lifetime = 0.38
+	particles.explosiveness = 0.92
+	particles.spread = 180.0
+	particles.gravity = Vector2(0, 260)
+	particles.initial_velocity_min = 90.0
+	particles.initial_velocity_max = 240.0
+	particles.scale_amount_min = 4.0
+	particles.scale_amount_max = 9.0
+	particles.color = Color(0.58, 0.06, 0.09, 0.92)
+	add_child(particles)
+	get_tree().create_timer(0.5).timeout.connect(particles.queue_free)
 
 func die() -> void:
 	is_dead = true
@@ -251,6 +283,7 @@ func die() -> void:
 		tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.35)
 
 		await tween.finished
+	queue_free()
 
 # Facing & Sprites
 

@@ -16,7 +16,7 @@ corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_rnop3"]
-size = Vector2(447, 459.25)
+size = Vector2(180, 180)
 
 [node name="Note" type="Area2D" unique_id=1826667186]
 collision_layer = 2
@@ -57,7 +57,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=427397265]
-scale = Vector2(0.3, 0.3)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("1_xfou2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604659892]
