@@ -14,15 +14,20 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="GameJam_RogueLike"
+config/name="Who pulls the trigger"
 run/main_scene="uid://delwwmwfbjixu"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-config/icon="res://icon.svg"
+config/icon="uid://drg4lkpwyxslq"
 
 [autoload]
 
+DialogSystem="*uid://cw8fm13sm2wb7"
 BgMusic="*uid://dvoaxe4hsxkea"
 GameManager="*uid://qhhlgl1nru5g"
+
+[display]
+
+window/size/mode=2
 
 [global_group]
 
