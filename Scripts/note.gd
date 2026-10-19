@@ -11,6 +11,7 @@ func _process(_delta: float) -> void:
 		if not note_ui.visible:
 			note_ui.visible = true
 		else:
+			GameManager.next_cicle()
 			queue_free()
 
 func _on_body_entered(body: Node2D) -> void:
