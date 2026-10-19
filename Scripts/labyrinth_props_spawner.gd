@@ -25,27 +25,55 @@ const PHASE_ONE_SANITY_WALL_NOTES := [
 	{
 		"id": "wall_note_1",
 		"tile": Vector2i(3, -1),
-		"text": "Hey... you're still out there watching me, right? My badge feels heavier in this dark... Guide my steps, help me keep my head together."
+		"text": "My badge feels heavier down here. I just need to keep my head straight and find a way out of this place."
 	},
 	{
 		"id": "wall_note_2",
 		"tile": Vector2i(-5, -21),
-		"text": "The way ahead is sealed off... You can see more of this place than I can, right? Show me where to go—I can't lose my mind on duty."
+		"text": "The way ahead is blocked. There has to be another path. I can't fall apart now, not while I'm still on duty."
 	},
 	{
 		"id": "wall_note_3",
 		"tile": Vector2i(7, -17),
-		"text": "The silence is eating at my head... Keep moving me forward, please. An officer has to stay calm under pressure, and I need your help to do it."
+		"text": "It's too quiet. Breathe, stay calm. That's what they taught us at the academy, and right now it's all I've got."
 	},
 	{
 		"id": "wall_note_4",
 		"tile": Vector2i(-20, -3),
-		"text": "Every wall looks the same... Am I walking a beat in circles, or are you leading me somewhere? Don't let go of me now."
+		"text": "Every wall looks the same. Am I walking in circles? Doesn't matter. One corner at a time."
 	},
 	{
 		"id": "wall_note_5",
 		"tile": Vector2i(-14, -20),
-		"text": "I can feel my sanity slipping the deeper we go... Stay with me just a little longer, partner. Help me reach whatever is waiting at the end of this corridor."
+		"text": "The deeper I go, the harder it is to think clearly. Whatever is waiting at the end of this, I want to face it as myself."
+	}
+]
+
+const PHASE_TWO_SANITY_WALL_NOTES := [
+	{
+		"id": "p2_wall_note_1",
+		"tile": Vector2i(1, -26),
+		"text": "The air has changed. It's colder, damp, smelling like stagnant water and rust."
+	},
+	{
+		"id": "p2_wall_note_2",
+		"tile": Vector2i(12, -26),
+		"text": "I can hear them scuttling along the ceilings. Keep your flashlight raised."
+	},
+	{
+		"id": "p2_wall_note_3",
+		"tile": Vector2i(22, -36),
+		"text": "Every junction feels like a trap. Stay focused on finding the exit."
+	},
+	{
+		"id": "p2_wall_note_4",
+		"tile": Vector2i(32, -43),
+		"text": "Something is blocking the upper passage. There has to be a way to clear it."
+	},
+	{
+		"id": "p2_wall_note_5",
+		"tile": Vector2i(48, -42),
+		"text": "My radio has been dead since the start. No backup. Just my own footsteps."
 	}
 ]
 
@@ -58,6 +86,17 @@ const PHASE_ONE_EXTRA_ENEMY_POSITIONS: Array[Vector2] = [
 	Vector2(-3200, -4736),  # North-west corridor (#14)
 	Vector2(-5760, -5248),  # Far west alcove (#15)
 	Vector2(-3328, -6912)   # Upper-west passage before Point 23 (#23)
+]
+
+const PHASE_TWO_ENEMY_POSITIONS: Array[Vector2] = [
+	Vector2(2432, -6272),   # North pathway (10, -25)
+	Vector2(5248, -8832),   # Dead-end hallway approach (20, -35)
+	Vector2(8576, -9088),   # Central-east hallway (33, -36)
+	Vector2(11392, -9088),  # Further east passage (44, -36)
+	Vector2(11648, -10368), # North-east corridor (45, -41)
+	Vector2(14720, -12672), # Upper corridor (57, -50)
+	Vector2(17280, -10368), # Dead-end alcove (67, -41)
+	Vector2(16512, -13696)  # High north branch (64, -54)
 ]
 
 @export var spawn_chance_per_tile: float = 0.28
@@ -91,6 +130,9 @@ func clear_phase_one_wall_notes() -> void:
 			n.queue_free()
 	_spawned_wall_notes.clear()
 
+func clear_phase_two_wall_notes() -> void:
+	clear_phase_one_wall_notes()
+
 func _setup_phase_one_purple_barrier(wall_layer: TileMapLayer) -> void:
 	var is_phase_one := true
 	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
@@ -118,6 +160,76 @@ func _setup_phase_one_purple_barrier(wall_layer: TileMapLayer) -> void:
 	col.shape = rect
 	barrier.add_child(col)
 	add_child(barrier)
+
+var _phase_two_barrier_body: StaticBody2D = null
+var _phase_two_barrier_sprite: Sprite2D = null
+
+func _setup_phase_two_barrier(wall_layer: TileMapLayer) -> void:
+	var is_phase_two := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_phase_two = (GameManager.current_phase == 2)
+
+	if not is_phase_two or not wall_layer:
+		return
+
+	# If player already collected the phase 2 note, barrier is unlocked
+	if get_node_or_null("/root/GameManager") and GameManager.get("phase_two_note_found") == true:
+		return
+
+	# Block the top-right passage at corridor tile (57, -34) / (56, -30) leading to the far top-right
+	var barrier := StaticBody2D.new()
+	barrier.name = "PhaseTwoTopRightBarrier"
+	barrier.collision_layer = 8 # Layer 4: Map/Obstacles
+	barrier.collision_mask = 0
+	var b_pos := Vector2(14720, -8576) # World pos at tile (57, -34)
+	barrier.global_position = b_pos
+
+	var col := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(512.0, 512.0)
+	col.shape = rect
+	barrier.add_child(col)
+
+	# Visual representation: barricade crate / rubble / wall block
+	var spr := Sprite2D.new()
+	if ResourceLoader.exists("res://Assets/sprites/props/prop_crate_broken.png"):
+		spr.texture = load("res://Assets/sprites/props/prop_crate_broken.png")
+	elif ResourceLoader.exists("res://Assets/sprites/props/prop_rubble.png"):
+		spr.texture = load("res://Assets/sprites/props/prop_rubble.png")
+	spr.scale = Vector2(2.4, 2.4)
+	spr.modulate = Color(0.9, 0.35, 0.35, 0.98)
+	barrier.add_child(spr)
+
+	var detect_area := Area2D.new()
+	detect_area.name = "BarrierDetectArea"
+	detect_area.collision_layer = 0
+	detect_area.collision_mask = 1
+	var detect_col := CollisionShape2D.new()
+	var detect_shape := CircleShape2D.new()
+	detect_shape.radius = 340.0
+	detect_col.shape = detect_shape
+	detect_area.add_child(detect_col)
+	barrier.add_child(detect_area)
+
+	detect_area.body_entered.connect(func(b: Node2D):
+		if b.is_in_group("player") or b.name == "character":
+			if b.has_method("_display_inner_thought"):
+				b._display_inner_thought("The corridor ahead is blocked by heavy debris. There has to be a way to clear it.", false, 4.2)
+	)
+
+	_phase_two_barrier_body = barrier
+	_phase_two_barrier_sprite = spr
+	add_child(barrier)
+
+func unlock_phase_two_barrier() -> void:
+	if _phase_two_barrier_body and is_instance_valid(_phase_two_barrier_body):
+		if _phase_two_barrier_sprite:
+			var tw := create_tween()
+			tw.tween_property(_phase_two_barrier_sprite, "modulate:a", 0.0, 0.45)
+			await tw.finished
+		if is_instance_valid(_phase_two_barrier_body):
+			_phase_two_barrier_body.queue_free()
+			_phase_two_barrier_body = null
 
 func _spawn_phase_one_sanity_wall_notes(wall_layer: TileMapLayer) -> void:
 	if not wall_layer or not ResourceLoader.exists(WALL_NOTE_TEXTURE_PATH):
@@ -152,35 +264,100 @@ func _spawn_phase_one_sanity_wall_notes(wall_layer: TileMapLayer) -> void:
 		add_child(note_node)
 		_spawned_wall_notes.append(note_node)
 
-func _spawn_phase_one_enemies(root: Node) -> void:
+func _spawn_phase_two_sanity_wall_notes(wall_layer: TileMapLayer) -> void:
+	if not wall_layer or not ResourceLoader.exists(WALL_NOTE_TEXTURE_PATH):
+		return
+	var is_phase_two := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_phase_two = (GameManager.current_phase == 2)
+	if not is_phase_two:
+		return
+
+	var note_tex := load(WALL_NOTE_TEXTURE_PATH) as Texture2D
+	var custom_font: FontFile = null
+	if ResourceLoader.exists("res://Assets/fonts/SpecialElite-Regular.ttf"):
+		custom_font = load("res://Assets/fonts/SpecialElite-Regular.ttf") as FontFile
+
+	for item in PHASE_TWO_SANITY_WALL_NOTES:
+		var note_id: String = item["id"]
+		if get_node_or_null("/root/GameManager") and GameManager.has_method("is_wall_note_collected"):
+			if GameManager.is_wall_note_collected(note_id):
+				continue
+
+		var tcell: Vector2i = item["tile"]
+		var w_local := wall_layer.map_to_local(tcell)
+		var w_world := wall_layer.to_global(w_local)
+
+		var note_node := _InteractableWallNote.new()
+		note_node.note_id = note_id
+		note_node.sanity_text = item["text"]
+		note_node.note_texture = note_tex
+		note_node.custom_font = custom_font
+		note_node.global_position = w_world + Vector2(0.0, 18.0)
+		add_child(note_node)
+		_spawned_wall_notes.append(note_node)
+
+func _spawn_phase_two_objective_note(root: Node) -> void:
+	var is_phase_two := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_phase_two = (GameManager.current_phase == 2)
+	if not is_phase_two or not root:
+		return
+
+	if get_node_or_null("/root/GameManager") and GameManager.get("phase_two_note_found") == true:
+		return
+
+	# Place the objective note at the dead end in the upper portion: tile (20, -35) -> Vector2(5248, -8832)
+	var note_scene := load("res://Scenes/items/note.tscn") as PackedScene
+	if note_scene:
+		var note_inst := note_scene.instantiate() as Area2D
+		note_inst.name = "PhaseTwoObjectiveNote"
+		note_inst.global_position = Vector2(5248, -8832)
+		root.add_child(note_inst)
+
+func _spawn_enemies(root: Node) -> void:
 	if not root:
 		return
-	var is_phase_one := true
+	var phase := 1
 	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
-		is_phase_one = (GameManager.current_phase == 1)
+		phase = GameManager.current_phase
 
 	var template_enemy := root.get_node_or_null("grunt") as CharacterBody2D
 	var second_enemy := root.get_node_or_null("grunt_2") as CharacterBody2D
 	var flashback_note := root.get_node_or_null("Note")
 
-	# After Phase 1 (once the flashback note is collected), Phase 1 enemies and the flashback note no longer appear
-	if not is_phase_one:
+	if phase == 1:
+		if not template_enemy:
+			return
+		for pos in PHASE_ONE_EXTRA_ENEMY_POSITIONS:
+			var enemy_inst := template_enemy.duplicate() as CharacterBody2D
+			if enemy_inst:
+				enemy_inst.global_position = pos
+				root.add_child(enemy_inst)
+	elif phase == 2:
+		# In phase 2, clean up initial phase 1 flashback note
+		if flashback_note:
+			flashback_note.queue_free()
+
+		# Ensure template enemies are at phase 2 positions
+		if template_enemy:
+			template_enemy.global_position = Vector2(2432, -6272)
+		if second_enemy:
+			second_enemy.global_position = Vector2(8576, -9088)
+
+		if template_enemy:
+			for i in range(2, PHASE_TWO_ENEMY_POSITIONS.size()):
+				var enemy_inst := template_enemy.duplicate() as CharacterBody2D
+				if enemy_inst:
+					enemy_inst.global_position = PHASE_TWO_ENEMY_POSITIONS[i]
+					root.add_child(enemy_inst)
+	else:
 		if template_enemy:
 			template_enemy.queue_free()
 		if second_enemy:
 			second_enemy.queue_free()
 		if flashback_note:
 			flashback_note.queue_free()
-		return
-
-	if not template_enemy:
-		return
-
-	for pos in PHASE_ONE_EXTRA_ENEMY_POSITIONS:
-		var enemy_inst := template_enemy.duplicate() as CharacterBody2D
-		if enemy_inst:
-			enemy_inst.global_position = pos
-			root.add_child(enemy_inst)
 
 func _populate_props() -> void:
 	var root := get_tree().current_scene
@@ -193,8 +370,11 @@ func _populate_props() -> void:
 		return
 
 	_setup_phase_one_purple_barrier(wall_layer)
+	_setup_phase_two_barrier(wall_layer)
 	_spawn_phase_one_sanity_wall_notes(wall_layer)
-	_spawn_phase_one_enemies(root)
+	_spawn_phase_two_sanity_wall_notes(wall_layer)
+	_spawn_phase_two_objective_note(root)
+	_spawn_enemies(root)
 
 	var loaded_floor_textures: Array[Texture2D] = []
 	for path in FLOOR_PROP_TEXTURES:
@@ -218,6 +398,8 @@ func _populate_props() -> void:
 	var reserved_wall_note_cells := {}
 	for item in PHASE_ONE_SANITY_WALL_NOTES:
 		reserved_wall_note_cells[item["tile"]] = true
+	for item in PHASE_TWO_SANITY_WALL_NOTES:
+		reserved_wall_note_cells[item["tile"]] = true
 
 	var player := get_tree().get_first_node_in_group("player") as Node2D
 	var rng := RandomNumberGenerator.new()
@@ -233,9 +415,11 @@ func _populate_props() -> void:
 			var local_pos := floor_layer.map_to_local(cell)
 			var world_pos := floor_layer.to_global(local_pos)
 
-			# Evitar spawnear un obstáculo sólido encima del jugador al inicio o encima de la nota en #23
+			# Evitar spawnear un obstáculo sólido encima del jugador al inicio o encima de las notas u objetivos
 			var near_player := player != null and world_pos.distance_to(player.global_position) < 280.0
 			var near_flashback_note := world_pos.distance_to(Vector2(-3840, -6400)) < 320.0
+			var near_phase_two_note := world_pos.distance_to(Vector2(5248, -8832)) < 320.0
+			var near_phase_two_barrier := world_pos.distance_to(Vector2(14720, -8576)) < 360.0
 
 			if rng.randf() > spawn_chance_per_tile:
 				continue
@@ -243,7 +427,7 @@ func _populate_props() -> void:
 			var prop_idx := rng.randi_range(0, loaded_floor_textures.size() - 1)
 			var is_solid_obstacle := (prop_idx == 5 or prop_idx == 6) # crate or broken pillar
 
-			if is_solid_obstacle and (near_player or near_flashback_note):
+			if is_solid_obstacle and (near_player or near_flashback_note or near_phase_two_note or near_phase_two_barrier):
 				prop_idx = rng.randi_range(0, 4)
 				is_solid_obstacle = false
 

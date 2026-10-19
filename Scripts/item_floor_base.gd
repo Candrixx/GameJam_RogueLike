@@ -47,7 +47,15 @@ func _input(event: InputEvent) -> void:
 		take_weapon()
 		
 func take_weapon():
-	print("Picking up weapon")
-	if character_in and weapon_to_equiped:
+	if not character_in or not weapon_to_equiped:
+		return
+	if character_in.has_method("add_to_inventory"):
+		var icon: Texture2D = null
+		var sprite := get_node_or_null("Sprite2D") as Sprite2D
+		if sprite:
+			icon = sprite.texture
+		if character_in.add_to_inventory(weapon_to_equiped, icon):
+			queue_free()
+	else:
 		character_in.equip_weapon(weapon_to_equiped)
 		queue_free()

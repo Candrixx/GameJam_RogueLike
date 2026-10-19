@@ -53,28 +53,75 @@ var _base_sprite_pos: Vector2 = Vector2.ZERO
 var _walk_anim_time: float = 0.0
 var _morality_thought_cooldown: float = 0.0
 
+# Insect skittering / crawling footstep audio for moving enemies
+var _crawler_audio_player: AudioStreamPlayer2D = null
+var _skitter_sound: AudioStreamWAV = null
+var _step_interval: float = 0.16
+var _step_timer: float = 0.0
+
 func _ready() -> void:
 	_patrol_origin = global_position
 	_pick_patrol_target()
 	_walk_anim_time = randf() * TAU
+
+	_setup_crawler_audio()
 
 	# Automatically find an AnimatedSprite2D anywhere in this enemy's scene tree
 	animated_sprite = find_child("*AnimatedSprite2D*", true, false) as AnimatedSprite2D
 	if animated_sprite:
 		_base_sprite_scale = animated_sprite.scale
 		_base_sprite_pos = animated_sprite.position
-		_ensure_phase_one_frames()
+		_setup_phase_frames()
 		_update_enemy_sprite()
 
 	add_to_group("enemy")
 
-func _ensure_phase_one_frames() -> void:
+func _setup_crawler_audio() -> void:
+	_crawler_audio_player = AudioStreamPlayer2D.new()
+	_crawler_audio_player.max_distance = 850.0
+	_crawler_audio_player.attenuation = 1.35
+	_crawler_audio_player.volume_db = -8.0
+	add_child(_crawler_audio_player)
+	_skitter_sound = _generate_insect_skitter_wav()
+
+func _generate_insect_skitter_wav() -> AudioStreamWAV:
+	# Generates an organic insect / spider leg skitter click with quick high-frequency chitin scuttle
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	var mix_rate := 22050
+	wav.mix_rate = mix_rate
+	wav.stereo = false
+	var duration := 0.042
+	var total_samples := int(duration * mix_rate)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+
+	var f1 := 2400.0
+	var f2 := 3600.0
+	for i in range(total_samples):
+		var t := float(i) / float(mix_rate)
+		var env := exp(-t * 90.0)
+		var sample_f := (sin(TAU * f1 * t) * 0.5 + sin(TAU * f2 * t) * 0.35 + (randf() * 2.0 - 1.0) * 0.25) * env
+		var s_val := int(clampf(sample_f, -1.0, 1.0) * 24000.0)
+		bytes.encode_s16(i * 2, s_val)
+
+	wav.data = bytes
+	return wav
+
+func _setup_phase_frames() -> void:
 	if not animated_sprite or not animated_sprite.sprite_frames:
 		return
-	# Ensure Phase 1 enemies use "fase 1.png" (front) for walk_down and "fase 1 espalda.png" (back) for walk_up
-	if ResourceLoader.exists("res://Assets/sprites/enemies/common/fase 1.png") and ResourceLoader.exists("res://Assets/sprites/enemies/common/fase 1 espalda.png"):
-		var front_tex := load("res://Assets/sprites/enemies/common/fase 1.png") as Texture2D
-		var back_tex := load("res://Assets/sprites/enemies/common/fase 1 espalda.png") as Texture2D
+
+	var is_phase_two := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_phase_two = (GameManager.current_phase == 2)
+
+	var front_path := "res://Assets/sprites/enemies/common/fase 2.png" if is_phase_two else "res://Assets/sprites/enemies/common/fase 1.png"
+	var back_path := "res://Assets/sprites/enemies/common/fase 2 espalda.png" if is_phase_two else "res://Assets/sprites/enemies/common/fase 1 espalda.png"
+
+	if ResourceLoader.exists(front_path) and ResourceLoader.exists(back_path):
+		var front_tex := load(front_path) as Texture2D
+		var back_tex := load(back_path) as Texture2D
 		var sf := animated_sprite.sprite_frames.duplicate() as SpriteFrames
 		if sf.has_animation("walk_down"):
 			sf.clear("walk_down")
@@ -175,6 +222,18 @@ func _animate_walk_motion(delta: float) -> void:
 		var sway_rot := sin(_walk_anim_time) * 0.055
 		animated_sprite.position = _base_sprite_pos + Vector2(0.0, bob_y)
 		animated_sprite.rotation = sway_rot
+
+		# Insect / crawler skitter sound effect playback in Phase 2
+		var is_p2 := false
+		if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+			is_p2 = (GameManager.current_phase == 2)
+		if is_p2:
+			_step_timer -= delta
+			if _step_timer <= 0.0 and _crawler_audio_player and _skitter_sound:
+				_step_timer = randf_range(0.12, 0.18)
+				_crawler_audio_player.pitch_scale = randf_range(0.85, 1.25)
+				_crawler_audio_player.stream = _skitter_sound
+				_crawler_audio_player.play()
 	else:
 		animated_sprite.position = animated_sprite.position.lerp(_base_sprite_pos, delta * 8.0)
 		animated_sprite.rotation = lerpf(animated_sprite.rotation, 0.0, delta * 8.0)

@@ -11,46 +11,82 @@ Fame, greatness, I never wanted any of that. I didn’t even want to stand out. 
 But being a cop is inherently violent in a way, isn’t it? Does that mean that violence is inherently a part of me?"""
 
 const PACIFIST_MORALITY_THOUGHTS: Array[String] = [
-	"Hold on... I'm a police officer, not an executioner. Guide me around it—we don't need to use lethal force.",
-	"Look at how slow it moves... It's not a threat if we keep our distance. Please, help me uphold my oath.",
-	"I swore to serve and protect... Don't make me swing this weapon unless we have no other choice.",
-	"My hand is trembling over my badge... Just lead me past it, okay? Let's keep our hands clean.",
-	"We don't have to beat every shadow in our path... Keep me moving forward, please.",
-	"Every blow leaves a stain a badge can't cover... Let's just slip past it."
+	"I'm a police officer, not an executioner. If I keep my distance, I don't have to hurt it.",
+	"It moves so slowly. It's not a threat if I stay away from it. I can still keep my oath.",
+	"I swore to serve and protect. I'm not swinging this unless there's no other choice.",
+	"My hand keeps drifting to my belt. Not yet. I can just get past it.",
+	"I don't have to fight every shadow down here. Keep moving.",
+	"Every blow leaves a mark the badge can't cover. Better to slip around it."
 ]
 
 const KILL_THOUGHTS_STAGE_1: Array[String] = [
-	"Wait... is that another suspect ahead? You want me to use force again, don't you?",
-	"There's blood on my uniform now... Tell me we're only doing what cops have to do to survive.",
-	"Why are you steering me straight toward it? Are we keeping the peace... or looking for an excuse to strike?"
+	"Another one up ahead. I don't want to do that again, but I will if it comes at me.",
+	"There's blood on my sleeve. It was self-defense. Anyone would have done the same.",
+	"Why am I walking toward it? I should be going around."
 ]
 
 const KILL_THOUGHTS_STAGE_2: Array[String] = [
-	"Another threat in our jurisdiction... Go on, make me swing. Put them down before they even flinch!",
-	"To serve and protect... No, down here the law is whatever weapon we're holding, isn't it?",
-	"Look at it staring at my badge... It's guilty. They're all guilty! Tell me to strike!"
+	"It's watching me. They all look at me the same way, like they know what I did.",
+	"Serve and protect. I keep repeating it, but down here it sounds hollow.",
+	"My grip is tighter than it needs to be. I keep telling myself it's just nerves."
 ]
 
 const KILL_THOUGHTS_STAGE_3: Array[String] = [
-	"DON'T LET IT BREATHE! Move me closer—let's show this shadow what police force really means!",
-	"There's no innocence down here! You want blood, I'll give you blood—just press the button, partner!",
-	"My head is spinning, hahaha... No more rules, no more reports! Just you, me, and the next target!"
+	"I don't hesitate anymore. I'm not sure when that stopped, and that scares me more than they do.",
+	"No rules down here, no reports to file. Nobody would ever know. Maybe that's the problem.",
+	"I keep counting them. I never decided to start counting. I just did."
 ]
 
 const WALL_NOTE_INSANITY_STAGE_1: Array[String] = [
-	"My badge is stained... You saw it, right? It was self-defense. Keep guiding me—tell me I'm still a good cop.",
-	"My pulse won't slow down... On the force, they said the first strike is the hardest. Why are you making it feel so easy?"
+	"There's a stain on my badge. I tried rubbing it off with my thumb. It was self-defense. I'm still a good cop.",
+	"My pulse won't slow down. At the academy they said the first time is the hardest. Nobody told me what comes after."
 ]
 
 const WALL_NOTE_INSANITY_STAGE_2: Array[String] = [
-	"The blood won't come off my uniform... Are you doing this to my mind, or was this brutality always hiding behind my badge?",
-	"I can hear police sirens screaming in my head... Don't stop now, partner. Help me clear every last corridor."
+	"The blood won't come out of my uniform. Was this always in me, waiting behind the badge?",
+	"I keep hearing sirens, but nobody is coming. It's only me down here."
 ]
 
 const WALL_NOTE_INSANITY_STAGE_3: Array[String] = [
-	"Sanity? Law? Who needs an oath when we hold authority over life and death! Keep pushing me forward, partner—let's finish this patrol in blood!",
-	"Look at my hands—soaked in red and steady as stone! You and I are the judge, the jury, and the trigger down here!"
+	"My hands are steady now. Too steady. I used to have to work at staying calm.",
+	"I went over my oath in my head and it felt like someone else wrote it."
 ]
+
+# Phase 2 thoughts: more disturbed, deeper descent, but not full psychosis yet
+const PHASE_TWO_PACIFIST_THOUGHTS: Array[String] = [
+	"These things look different now. More twisted, crawling like insects. Keep your distance.",
+	"Don't lose control now. We got through before without giving in. We can do it again.",
+	"The sound of their legs scratching the stone makes my skin crawl. Just walk around them.",
+	"I haven't crossed that line yet. Even in this dark, I know who I am."
+]
+
+const PHASE_TWO_KILL_STAGE_1: Array[String] = [
+	"They're faster now. Or maybe my patience is running out.",
+	"Another strike. The impact didn't even shock me this time.",
+	"My uniform was already stained anyway. What's one more mark?"
+]
+
+const PHASE_TWO_KILL_STAGE_2: Array[String] = [
+	"They skitter in the dark, but they go down just like the others.",
+	"My knuckles ache from gripping the weapon. I haven't let go of it once.",
+	"When I close my eyes, I still hear that scraping noise. The only way to silence it is to hit first."
+]
+
+const PHASE_TWO_WALL_PACIFIST: Array[String] = [
+	"The air is thicker here. If I can just find the way through, this nightmare has to end.",
+	"I can feel the walls closing in, but my hands are clean. That has to count for something."
+]
+
+const PHASE_TWO_WALL_CORRUPTED: Array[String] = [
+	"The paper is soaked in something dark. I can barely read it through the ringing in my ears.",
+	"Whoever wrote this was losing their grip. Or maybe they were the only one seeing things clearly."
+]
+
+const INVENTORY_SLOT_COUNT := 3
+const INVENTORY_SCALE := 0.42
+# Slot centers measured on "Inventario BASE.png" (347x720)
+const INVENTORY_SLOT_CENTERS: Array[Vector2] = [Vector2(170, 145), Vector2(170, 355), Vector2(170, 566)]
+const INVENTORY_ICON_BOX := Vector2(180, 145)
 
 @export var speed = 450
 @export var accelaration = 35
@@ -77,13 +113,22 @@ var _injury_pulse_time: float = 0.0
 var _intro_note_advance_requested: bool = false
 
 # Organic inner thought / sanity wall note HUD (no titles)
-var _thought_panel: PanelContainer = null
+var _thought_panel: Control = null
+var _thought_bg: TextureRect = null
 var _thought_body_label: Label = null
 var _thought_tween: Tween = null
+var _note_clean_tex: Texture2D = null
+var _note_blood_tex: Texture2D = null
 var _morality_thought_index: int = 0
 var _wall_insanity_index: int = 0
 var _global_morality_cooldown: float = 0.0
 var _triggered_by_flashback_note: bool = false
+
+# Inventory: only items that can be picked up. Each entry is {} or {"scene": PackedScene, "icon": Texture2D}
+var inventory: Array[Dictionary] = []
+var selected_slot: int = 0
+var _inv_icons: Array[TextureRect] = []
+var _inv_select_rect: TextureRect = null
 
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
@@ -91,10 +136,13 @@ var _triggered_by_flashback_note: bool = false
 func _ready() -> void:
 	life = max_life
 	add_to_group("player")
+	for i in INVENTORY_SLOT_COUNT:
+		inventory.append({})
 	_setup_labyrinth_props_and_void()
 	_setup_watch_overlay()
 	_setup_damage_indicator()
 	_setup_thought_hud()
+	_setup_inventory_hud()
 	call_deferred("_show_intro_notes")
 
 func _process(delta: float) -> void:
@@ -160,6 +208,110 @@ func equip_weapon(new_weapon: PackedScene):
 		weapon_equiped.position = Vector2.ZERO
 		weapon_equiped.rotation = 0
 
+func unequip_weapon() -> void:
+	if weapon_equiped:
+		weapon_equiped.queue_free()
+	weapon_equiped = null
+
+# Called by pickable floor items. Returns false when the inventory is full.
+func add_to_inventory(item_scene: PackedScene, icon: Texture2D) -> bool:
+	if item_scene == null:
+		return false
+	var target := -1
+	if inventory[selected_slot].is_empty():
+		target = selected_slot
+	else:
+		for i in INVENTORY_SLOT_COUNT:
+			if inventory[i].is_empty():
+				target = i
+				break
+	if target == -1:
+		_display_inner_thought("My hands are full. I'd have to drop something first.", false, 2.6)
+		return false
+	inventory[target] = {"scene": item_scene, "icon": icon}
+	if target == selected_slot:
+		equip_weapon(item_scene)
+	_refresh_inventory_hud()
+	return true
+
+func select_inventory_slot(index: int) -> void:
+	index = wrapi(index, 0, INVENTORY_SLOT_COUNT)
+	if is_attacking or is_dead:
+		return
+	selected_slot = index
+	var entry: Dictionary = inventory[index]
+	if entry.is_empty():
+		unequip_weapon()
+	else:
+		equip_weapon(entry["scene"])
+	_refresh_inventory_hud()
+
+func _unhandled_input(event: InputEvent) -> void:
+	if is_reading_intro or is_dead:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		match event.physical_keycode:
+			KEY_1: select_inventory_slot(0)
+			KEY_2: select_inventory_slot(1)
+			KEY_3: select_inventory_slot(2)
+	elif event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			select_inventory_slot(selected_slot - 1)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			select_inventory_slot(selected_slot + 1)
+
+func _setup_inventory_hud() -> void:
+	if not _hud_layer:
+		return
+	var base_tex: Texture2D = load("res://Assets/inventory/Inventario BASE.png") if ResourceLoader.exists("res://Assets/inventory/Inventario BASE.png") else null
+	var sel_tex: Texture2D = load("res://Assets/inventory/Inventario SELECCION.png") if ResourceLoader.exists("res://Assets/inventory/Inventario SELECCION.png") else null
+	var base_size := base_tex.get_size() if base_tex else Vector2(347, 720)
+
+	var root := Control.new()
+	root.name = "InventoryHUD"
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
+	root.offset_left = -(base_size.x * INVENTORY_SCALE + 24.0)
+	root.offset_top = -base_size.y * INVENTORY_SCALE * 0.5
+	root.offset_right = root.offset_left + base_size.x
+	root.offset_bottom = root.offset_top + base_size.y
+	root.scale = Vector2(INVENTORY_SCALE, INVENTORY_SCALE)
+	_hud_layer.add_child(root)
+
+	var bg := TextureRect.new()
+	bg.texture = base_tex
+	bg.size = base_size
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(bg)
+
+	for i in INVENTORY_SLOT_COUNT:
+		var icon := TextureRect.new()
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.size = INVENTORY_ICON_BOX
+		icon.position = INVENTORY_SLOT_CENTERS[i] - INVENTORY_ICON_BOX * 0.5
+		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		root.add_child(icon)
+		_inv_icons.append(icon)
+
+	_inv_select_rect = TextureRect.new()
+	_inv_select_rect.texture = sel_tex
+	_inv_select_rect.size = sel_tex.get_size() if sel_tex else Vector2(281, 234)
+	_inv_select_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_inv_select_rect)
+
+	_refresh_inventory_hud()
+
+func _refresh_inventory_hud() -> void:
+	if _inv_icons.is_empty():
+		return
+	for i in INVENTORY_SLOT_COUNT:
+		var entry: Dictionary = inventory[i]
+		_inv_icons[i].texture = null if entry.is_empty() else entry.get("icon")
+		_inv_icons[i].modulate = Color.WHITE if i == selected_slot else Color(0.75, 0.75, 0.72, 0.85)
+	if _inv_select_rect:
+		_inv_select_rect.position = INVENTORY_SLOT_CENTERS[selected_slot] - _inv_select_rect.size * 0.5
+
 func _get_total_kills() -> int:
 	if get_node_or_null("/root/GameManager") and GameManager.get("kill_count") != null:
 		return maxi(kills, int(GameManager.kill_count))
@@ -173,16 +325,30 @@ func add_kill() -> void:
 	print("Enemies defeated: ", total, " | Genocide route active")
 	_global_morality_cooldown = 3.5
 
-	if total == 1:
-		_display_inner_thought("I killed it... Why did you make me strike? It was self-defense, right? Tell me that was lawful force...", Color(0.92, 0.78, 0.74, 0.98), 4.8)
-	elif total == 2:
-		_display_inner_thought("Another one down... My hands are shaking, or maybe they're finally steady. You saw it resisting too, didn't you?", Color(0.93, 0.68, 0.64, 0.98), 4.8)
-	elif total == 3:
-		_display_inner_thought("Three down... Look at them fall. We wear the badge in this place—we decide who's guilty, don't we?", Color(0.94, 0.56, 0.52, 0.98), 4.8)
-	elif total == 4:
-		_display_inner_thought("Stop resisting! ...Wait, it wasn't even fighting back. Why am I smiling? Why aren't you stopping me?!", Color(0.95, 0.44, 0.42, 0.98), 5.0)
+	var is_p2 := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_p2 = (GameManager.current_phase == 2)
+
+	if is_p2:
+		if total <= 1:
+			_display_inner_thought("Down it goes. It had too many limbs, but blood still smells the same.", false, 4.8)
+		elif total <= 3:
+			_display_inner_thought("Another crushed. I barely blinked when I swung.", true, 4.8)
+		elif total <= 5:
+			_display_inner_thought("Four down. Five down. I'm stopping their scurrying before they even touch me.", true, 5.0)
+		else:
+			_display_inner_thought("Every corridor smells of copper. I stopped trying to wipe it off.", true, 5.0)
 	else:
-		_display_inner_thought("CLEAN THE STREETS! PUT THEM ALL DOWN! ...Look at us, partner—the badge looks so much better soaked in red!", Color(0.96, 0.34, 0.34, 0.98), 5.0)
+		if total == 1:
+			_display_inner_thought("I killed it. It came at me, it was self-defense. That's what I'll put in the report, if there's ever a report.", false, 4.8)
+		elif total == 2:
+			_display_inner_thought("Another one. My hands are shaking. Or maybe they aren't, and that's worse.", false, 4.8)
+		elif total == 3:
+			_display_inner_thought("Three. I said I'd only do it if I had to. I'm not sure I had to that time.", true, 4.8)
+		elif total == 4:
+			_display_inner_thought("It wasn't even fighting back. I didn't notice until it was already on the floor.", true, 5.0)
+		else:
+			_display_inner_thought("It gets easier every time. I hate that it gets easier.", true, 5.0)
 
 func trigger_enemy_morality_thought() -> void:
 	if is_dead or is_reading_intro or _global_morality_cooldown > 0.0:
@@ -191,22 +357,30 @@ func trigger_enemy_morality_thought() -> void:
 
 	var total := _get_total_kills()
 	var line := ""
-	var text_col := Color(0.92, 0.90, 0.85, 0.98)
+	var is_p2 := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_p2 = (GameManager.current_phase == 2)
 
-	if total <= 0:
-		line = PACIFIST_MORALITY_THOUGHTS[_morality_thought_index % PACIFIST_MORALITY_THOUGHTS.size()]
-	elif total <= 2:
-		line = KILL_THOUGHTS_STAGE_1[_morality_thought_index % KILL_THOUGHTS_STAGE_1.size()]
-		text_col = Color(0.92, 0.78, 0.74, 0.98)
-	elif total <= 4:
-		line = KILL_THOUGHTS_STAGE_2[_morality_thought_index % KILL_THOUGHTS_STAGE_2.size()]
-		text_col = Color(0.94, 0.56, 0.52, 0.98)
+	if is_p2:
+		if total <= 0:
+			line = PHASE_TWO_PACIFIST_THOUGHTS[_morality_thought_index % PHASE_TWO_PACIFIST_THOUGHTS.size()]
+		elif total <= 3:
+			line = PHASE_TWO_KILL_STAGE_1[_morality_thought_index % PHASE_TWO_KILL_STAGE_1.size()]
+		else:
+			line = PHASE_TWO_KILL_STAGE_2[_morality_thought_index % PHASE_TWO_KILL_STAGE_2.size()]
 	else:
-		line = KILL_THOUGHTS_STAGE_3[_morality_thought_index % KILL_THOUGHTS_STAGE_3.size()]
-		text_col = Color(0.96, 0.36, 0.36, 0.98)
+		if total <= 0:
+			line = PACIFIST_MORALITY_THOUGHTS[_morality_thought_index % PACIFIST_MORALITY_THOUGHTS.size()]
+		elif total <= 2:
+			line = KILL_THOUGHTS_STAGE_1[_morality_thought_index % KILL_THOUGHTS_STAGE_1.size()]
+		elif total <= 4:
+			line = KILL_THOUGHTS_STAGE_2[_morality_thought_index % KILL_THOUGHTS_STAGE_2.size()]
+		else:
+			line = KILL_THOUGHTS_STAGE_3[_morality_thought_index % KILL_THOUGHTS_STAGE_3.size()]
 
 	_morality_thought_index += 1
-	_display_inner_thought(line, text_col, 4.4)
+	var is_bloody := (total >= 3) if not is_p2 else (total >= 1)
+	_display_inner_thought(line, is_bloody, 4.4)
 
 func show_sanity_wall_note_thought(base_text: String) -> void:
 	if is_dead:
@@ -214,22 +388,29 @@ func show_sanity_wall_note_thought(base_text: String) -> void:
 	_global_morality_cooldown = 5.0
 	var total := _get_total_kills()
 	var final_text := base_text
-	var text_col := Color(0.94, 0.92, 0.86, 0.98)
+	var is_p2 := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_p2 = (GameManager.current_phase == 2)
 
-	if total >= 5:
-		final_text = WALL_NOTE_INSANITY_STAGE_3[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_3.size()]
-		text_col = Color(0.96, 0.38, 0.38, 0.98)
+	if is_p2:
+		if total <= 0:
+			final_text = PHASE_TWO_WALL_PACIFIST[_wall_insanity_index % PHASE_TWO_WALL_PACIFIST.size()]
+		else:
+			final_text = PHASE_TWO_WALL_CORRUPTED[_wall_insanity_index % PHASE_TWO_WALL_CORRUPTED.size()]
 		_wall_insanity_index += 1
-	elif total >= 3:
-		final_text = WALL_NOTE_INSANITY_STAGE_2[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_2.size()]
-		text_col = Color(0.94, 0.58, 0.54, 0.98)
-		_wall_insanity_index += 1
-	elif total >= 1:
-		final_text = WALL_NOTE_INSANITY_STAGE_1[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_1.size()]
-		text_col = Color(0.92, 0.78, 0.74, 0.98)
-		_wall_insanity_index += 1
+	else:
+		if total >= 5:
+			final_text = WALL_NOTE_INSANITY_STAGE_3[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_3.size()]
+			_wall_insanity_index += 1
+		elif total >= 3:
+			final_text = WALL_NOTE_INSANITY_STAGE_2[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_2.size()]
+			_wall_insanity_index += 1
+		elif total >= 1:
+			final_text = WALL_NOTE_INSANITY_STAGE_1[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_1.size()]
+			_wall_insanity_index += 1
 
-	_display_inner_thought(final_text, text_col, 5.6)
+	var is_bloody := (total >= 3) if not is_p2 else (total >= 1)
+	_display_inner_thought(final_text, is_bloody, 5.6)
 
 func trigger_flashback_note_drain() -> void:
 	if is_dead:
@@ -243,8 +424,11 @@ func trigger_flashback_note_drain() -> void:
 
 func _clear_phase_one_wall_notes() -> void:
 	var spawner := get_tree().get_first_node_in_group("labyrinth_props_spawner")
-	if spawner and spawner.has_method("clear_phase_one_wall_notes"):
-		spawner.clear_phase_one_wall_notes()
+	if spawner:
+		if spawner.has_method("clear_phase_one_wall_notes"):
+			spawner.clear_phase_one_wall_notes()
+		if spawner.has_method("clear_phase_two_wall_notes"):
+			spawner.clear_phase_two_wall_notes()
 
 func register_damage_dealt(_amount: int) -> void:
 	has_dealt_damage_dealt_in_phase_one()
@@ -557,53 +741,66 @@ func _setup_thought_hud() -> void:
 	if not _hud_layer:
 		return
 
-	_thought_panel = PanelContainer.new()
+	if ResourceLoader.exists("res://Assets/nota_limpia.png"):
+		_note_clean_tex = load("res://Assets/nota_limpia.png")
+	if ResourceLoader.exists("res://Assets/nota_sangre.png"):
+		_note_blood_tex = load("res://Assets/nota_sangre.png")
+
+	# Same 1040x529 aspect ratio as the note art so it never stretches
+	var note_w := 640.0
+	var note_h := 326.0
+	_thought_panel = Control.new()
 	_thought_panel.name = "InnerThoughtPanel"
 	_thought_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	_thought_panel.offset_left = -460.0
-	_thought_panel.offset_top = -140.0
-	_thought_panel.offset_right = 460.0
-	_thought_panel.offset_bottom = -36.0
+	_thought_panel.offset_left = -note_w * 0.5
+	_thought_panel.offset_top = -note_h - 12.0
+	_thought_panel.offset_right = note_w * 0.5
+	_thought_panel.offset_bottom = -12.0
 	_thought_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_thought_panel.visible = false
 	_thought_panel.modulate.a = 0.0
-
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.02, 0.026, 0.86)
-	style.border_color = Color(0.24, 0.23, 0.20, 0.65)
-	style.set_border_width_all(1)
-	style.set_corner_radius_all(3)
-	style.shadow_color = Color(0.0, 0.0, 0.0, 0.82)
-	style.shadow_size = 10
-	style.content_margin_left = 28.0
-	style.content_margin_right = 28.0
-	style.content_margin_top = 16.0
-	style.content_margin_bottom = 16.0
-	_thought_panel.add_theme_stylebox_override("panel", style)
 	_hud_layer.add_child(_thought_panel)
+
+	_thought_bg = TextureRect.new()
+	_thought_bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_thought_bg.texture = _note_clean_tex
+	_thought_bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_thought_bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_thought_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_thought_panel.add_child(_thought_bg)
+
+	var margin := MarginContainer.new()
+	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 88)
+	margin.add_theme_constant_override("margin_right", 88)
+	margin.add_theme_constant_override("margin_top", 54)
+	margin.add_theme_constant_override("margin_bottom", 46)
+	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_thought_panel.add_child(margin)
 
 	var custom_font: FontFile = null
 	if ResourceLoader.exists("res://Assets/fonts/SpecialElite-Regular.ttf"):
 		custom_font = load("res://Assets/fonts/SpecialElite-Regular.ttf")
 
 	_thought_body_label = Label.new()
-	_thought_body_label.custom_minimum_size = Vector2(860.0, 0.0)
 	_thought_body_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_thought_body_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_thought_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_thought_body_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	if custom_font:
 		_thought_body_label.add_theme_font_override("font", custom_font)
-	_thought_body_label.add_theme_font_size_override("font_size", 24)
-	_thought_body_label.add_theme_color_override("font_color", Color(0.92, 0.90, 0.85, 0.98))
-	_thought_body_label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
-	_thought_body_label.add_theme_constant_override("outline_size", 5)
-	_thought_panel.add_child(_thought_body_label)
+	_thought_body_label.add_theme_font_size_override("font_size", 23)
+	_thought_body_label.add_theme_color_override("font_color", Color(0.08, 0.08, 0.07, 0.96))
+	_thought_body_label.add_theme_constant_override("line_spacing", 4)
+	margin.add_child(_thought_body_label)
 
-func _display_inner_thought(body_text: String, text_col: Color = Color(0.92, 0.90, 0.85, 0.98), duration: float = 4.2) -> void:
+func _display_inner_thought(body_text: String, bloody: bool = false, duration: float = 4.2) -> void:
 	if not _thought_panel:
 		return
 	_thought_body_label.text = body_text
-	_thought_body_label.add_theme_color_override("font_color", text_col)
+	if _thought_bg:
+		_thought_bg.texture = _note_blood_tex if (bloody and _note_blood_tex) else _note_clean_tex
+	_thought_body_label.add_theme_color_override("font_color", Color(0.16, 0.04, 0.04, 0.97) if bloody else Color(0.08, 0.08, 0.07, 0.96))
 
 	_thought_panel.visible = true
 	if _thought_tween and _thought_tween.is_valid():
@@ -822,7 +1019,8 @@ func _show_intro_notes() -> void:
 		["[ W A S D ]  /  [ Arrows ]", "Move"],
 		["[ R ]", "Check watch"],
 		["[ Left Click ]  /  [ J ]", "Strike / Attack"],
-		["[ E ]", "Pick up objects"]
+		["[ E ]", "Pick up objects"],
+		["[ 1 2 3 ]  /  [ Wheel ]", "Choose item"]
 	]
 	for pair in rows:
 		var k_lbl := Label.new()

@@ -7,6 +7,8 @@ var is_genocide_route: bool = false
 var collected_wall_notes: Dictionary = {}
 var intro_notes_shown: bool = false
 
+var phase_two_note_found: bool = false
+
 func add_kill() -> void:
 	kill_count += 1
 	is_genocide_route = true
@@ -24,9 +26,14 @@ func mark_wall_note_collected(note_id: String) -> void:
 func is_wall_note_collected(note_id: String) -> bool:
 	return collected_wall_notes.has(note_id)
 
+func unlock_phase_two_barrier() -> void:
+	phase_two_note_found = true
+	print("Phase 2 note found! Upper-right barrier opened.")
+
 func advance_to_phase_two() -> void:
 	current_phase = 2
 	cicle = maxi(cicle + 1, 1)
+	phase_two_note_found = false
 	print("Advanced to Phase 2 | Route: ", get_route_name(), " | Kills: ", kill_count)
 
 func reset_kills() -> void:
@@ -34,6 +41,9 @@ func reset_kills() -> void:
 		kill_count = 0
 		is_genocide_route = false
 		collected_wall_notes.clear()
+	elif current_phase == 2:
+		# If restarting phase 2 on death, reset phase 2 note if needed
+		pass
 
 func next_cicle() -> void:
 	cicle += 1

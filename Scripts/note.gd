@@ -38,8 +38,29 @@ func _process(_delta: float) -> void:
 		if _prompt_label:
 			_prompt_label.visible = false
 		var player := get_tree().get_first_node_in_group("player")
-		if player and player.has_method("trigger_flashback_note_drain"):
-			player.trigger_flashback_note_drain()
+		var is_p2 := false
+		if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+			is_p2 = (GameManager.current_phase == 2)
+		if name == "PhaseTwoObjectiveNote":
+			is_p2 = true
+
+		if is_p2:
+			if get_node_or_null("/root/GameManager") and GameManager.has_method("unlock_phase_two_barrier"):
+				GameManager.unlock_phase_two_barrier()
+			var spawner := get_tree().get_first_node_in_group("labyrinth_props_spawner")
+			if spawner and spawner.has_method("unlock_phase_two_barrier"):
+				spawner.unlock_phase_two_barrier()
+			if player and player.has_method("_display_inner_thought"):
+				var is_genocide := false
+				if get_node_or_null("/root/GameManager"):
+					is_genocide = GameManager.get("is_genocide_route") or GameManager.get("kill_count") > 0
+				if is_genocide:
+					player._display_inner_thought("The barricade to the upper corridor gave way. Nothing stands between me and whatever is up there.", true, 4.8)
+				else:
+					player._display_inner_thought("Something shifted in the distance. The blocked passage to the upper right is open.", false, 4.8)
+		else:
+			if player and player.has_method("trigger_flashback_note_drain"):
+				player.trigger_flashback_note_drain()
 		visible = false
 		queue_free()
 
