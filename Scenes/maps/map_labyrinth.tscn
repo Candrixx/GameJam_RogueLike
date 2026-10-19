@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://y7swrtjmrmpj" path="res://Scenes/items/baton_floor.tscn" id="9_6pn7r"]
 [ext_resource type="PackedScene" uid="uid://c0h2rij0ubk5l" path="res://Scenes/items/brass_knuckles_floor.tscn" id="10_oab3y"]
 [ext_resource type="PackedScene" uid="uid://d3ta5dwghxj6w" path="res://Scenes/items/note.tscn" id="11_n257l"]
+[ext_resource type="Script" uid="uid://j04am5ti0glp" path="res://Scripts/area_2d.gd" id="12_kpd2b"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ratia"]
 texture = ExtResource("2_d3g55")
@@ -198,6 +199,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ty0te"]
+size = Vector2(254, 317)
+
 [node name="map_laberynth" type="Node2D" unique_id=787963577]
 y_sort_enabled = true
 
@@ -264,3 +268,15 @@ position = Vector2(953, 483)
 
 [node name="Note" parent="." unique_id=1826667186 instance=ExtResource("11_n257l")]
 position = Vector2(2812, -1813)
+
+[node name="GatilloDialogo" type="Area2D" parent="." unique_id=1603183096]
+script = ExtResource("12_kpd2b")
+texto_del_personaje = "Desplazate usando W A S D o ↑↓→←
+Interactua con los objetos usando \"E\"
+Ataca a las sombras usando \"K\" o click izq"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GatilloDialogo" unique_id=89378814]
+position = Vector2(479, 304)
+shape = SubResource("RectangleShape2D_ty0te")
+
+[connection signal="body_entered" from="GatilloDialogo" to="GatilloDialogo" method="_on_body_entered"]
