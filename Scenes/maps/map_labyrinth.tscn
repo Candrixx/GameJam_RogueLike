@@ -226,7 +226,7 @@ position = Vector2(-16, -120)
 [node name="grunt" type="CharacterBody2D" parent="." unique_id=80181355]
 position = Vector2(-1428, -2696)
 collision_layer = 4
-collision_mask = 3
+collision_mask = 15
 script = ExtResource("7_n257l")
 life = 50
 
@@ -242,7 +242,7 @@ animation = &"walk_down"
 [node name="longboi" type="CharacterBody2D" parent="." unique_id=81435098]
 position = Vector2(-944, -2530)
 collision_layer = 4
-collision_mask = 3
+collision_mask = 15
 script = ExtResource("7_n257l")
 life = 75
 

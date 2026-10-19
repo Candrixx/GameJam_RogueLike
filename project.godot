@@ -27,6 +27,11 @@ DialogSystem="*uid://cw8fm13sm2wb7"
 
 window/size/mode=2
 
+[autoload]
+
+BgMusic="*uid://dvoaxe4hsxkea"
+GameManager="*uid://qhhlgl1nru5g"
+
 [global_group]
 
 player=""

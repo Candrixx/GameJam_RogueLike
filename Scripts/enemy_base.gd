@@ -6,7 +6,7 @@ enum State { PATROL, WAIT, CHASE, SEARCH }
 
 # Variables de vision
 @export var fov_degrees: float = 190.0
-@export var view_distance: float = 300.0
+@export var view_distance: float = 350.0
 @export var player_group: StringName = &"player"
 
 # Variables de movimiento
@@ -51,6 +51,8 @@ var animated_sprite: AnimatedSprite2D = null
 func _ready() -> void:
 	_patrol_origin = global_position
 	_pick_patrol_target()
+	
+	# Automatically find an AnimatedSprite2D anywhere in this enemy's scene tree
 	animated_sprite = find_child("*AnimatedSprite2D*", true, false) as AnimatedSprite2D
 
 	add_to_group("enemy")
@@ -110,7 +112,7 @@ func _physics_process(delta: float) -> void:
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
 		var collider = collision.get_collider()
-		if collider is Character and collider.has_method("take_damage"):
+		if collider and collider.has_method("take_damage") and collider.is_in_group(player_group):
 			collider.take_damage(contact_damage)
 
 # Vision
@@ -146,7 +148,8 @@ func can_see_player(player: Node2D) -> bool:
 
 func _enter_chase() -> void:
 	state = State.CHASE
-	_last_known_pos = _player.global_position
+	if _player:
+		_last_known_pos = _player.global_position
 	_lost_sight_timer = 0.0
 
 func _enter_search() -> void:
@@ -211,12 +214,21 @@ func apply_knockback(force: Vector2) -> void:
 
 # Daño
 
-func take_damage(damage: int) -> void:
+func take_damage(damage: int, attacker: Node2D = null) -> void:
 	if is_dead:
 		return
 
 	life -= damage
 	print(self.name, " remaining life: ", life)
+
+	# If hit from behind/distance, track the attacker's position and trigger chase state
+	if not attacker:
+		attacker = get_tree().get_first_node_in_group(player_group)
+	
+	if attacker:
+		_last_known_pos = attacker.global_position
+	
+	_enter_chase()
 
 	if life <= 0:
 		die()
@@ -240,7 +252,7 @@ func die() -> void:
 
 		await tween.finished
 
-# Facing
+# Facing & Sprites
 
 func _facing_from_vector(v: Vector2) -> void:
 	if absf(v.x) > absf(v.y):

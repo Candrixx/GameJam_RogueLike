@@ -30,3 +30,6 @@ Thumbs.db
 *.csproj.nuget.spec.cache
 *.project.json
 project.lock.json
+Scripts/character.gd
+Scripts/base_item.gd
+Scenes/maps/map_labyrinth.tscn
