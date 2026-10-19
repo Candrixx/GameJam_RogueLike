@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://delwwmwfbjixu"]
 
 [ext_resource type="Script" uid="uid://cjgbmjqi3etl3" path="res://Scripts/ui.gd" id="1_h3gr5"]
-[ext_resource type="Texture2D" uid="uid://b3tmxavojg518" path="res://Assets/start_texture/pantalla.png" id="1_q1tuw"]
-[ext_resource type="Texture2D" uid="uid://c1i6rlmlujmw3" path="res://Assets/start_texture/logo blanco.png" id="2_h3gr5"]
-[ext_resource type="Texture2D" uid="uid://cnblpj0bohogg" path="res://Assets/start_texture/pantalla inicio gamejam SELECCION.png" id="3_no0mw"]
-[ext_resource type="Texture2D" uid="uid://cbhnpu2obt3hq" path="res://Assets/start_texture/pantalla inicio gamejam.png" id="4_wi1ys"]
-[ext_resource type="Texture2D" uid="uid://bl112a0x7f7vs" path="res://Assets/start_texture/pantalla inicio gamejam CREDITOS.png" id="5_vfjtn"]
-[ext_resource type="Texture2D" uid="uid://uox6a51fyrpi" path="res://Assets/start_texture/pantalla inicio gamejam SALIR.png" id="6_0us5w"]
+[ext_resource type="Texture2D" uid="uid://b5nber20h3gyc" path="res://Assets/start_texture/pantalla.png" id="1_q1tuw"]
+[ext_resource type="Texture2D" uid="uid://b2dnpjei1178d" path="res://Assets/start_texture/logo blanco.png" id="2_h3gr5"]
+[ext_resource type="Texture2D" uid="uid://bhqiydc47oe36" path="res://Assets/start_texture/pantalla inicio gamejam SELECCION.png" id="3_no0mw"]
+[ext_resource type="Texture2D" uid="uid://01k6tr16n8ed" path="res://Assets/start_texture/pantalla inicio gamejam.png" id="4_wi1ys"]
+[ext_resource type="Texture2D" uid="uid://dylimi2vcfn30" path="res://Assets/start_texture/pantalla inicio gamejam CREDITOS.png" id="5_vfjtn"]
+[ext_resource type="Texture2D" uid="uid://cfbi4dcbkhmun" path="res://Assets/start_texture/pantalla inicio gamejam SALIR.png" id="6_0us5w"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ty0te"]
 
@@ -39,8 +39,10 @@ anchors_preset = -1
 anchor_left = 0.554
 anchor_right = 1.0
 anchor_bottom = 0.573
-offset_left = -0.20800781
-offset_bottom = -0.3040161
+offset_left = 42.791992
+offset_top = 52.0
+offset_right = -45.668457
+offset_bottom = -12.304016
 grow_horizontal = 0
 texture = ExtResource("2_h3gr5")
 expand_mode = 1
