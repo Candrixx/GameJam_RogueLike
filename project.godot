@@ -19,6 +19,11 @@ run/main_scene="uid://delwwmwfbjixu"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+BgMusic="*uid://dvoaxe4hsxkea"
+GameManager="*uid://qhhlgl1nru5g"
+
 [global_group]
 
 player=""
