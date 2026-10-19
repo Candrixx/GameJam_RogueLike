@@ -114,7 +114,3 @@ func die() -> void:
 	await get_tree().create_timer(0.5).timeout
 
 	get_tree().reload_current_scene()
-
-func add_kill() -> void:
-	kill_count += 1
-	print("Enemies defeated: ", kill_count)

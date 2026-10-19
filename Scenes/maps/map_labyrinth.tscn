@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://c3r8a32tau1di" path="res://Assets/sprites/enemies/common/fase 2.png" id="7_wv7ue"]
 [ext_resource type="PackedScene" uid="uid://y7swrtjmrmpj" path="res://Scenes/items/baton_floor.tscn" id="9_6pn7r"]
 [ext_resource type="PackedScene" uid="uid://c0h2rij0ubk5l" path="res://Scenes/items/brass_knuckles_floor.tscn" id="10_oab3y"]
+[ext_resource type="PackedScene" uid="uid://d3ta5dwghxj6w" path="res://Scenes/items/note.tscn" id="11_n257l"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ratia"]
 texture = ExtResource("2_d3g55")
@@ -260,3 +261,6 @@ position = Vector2(1458, 462)
 
 [node name="brass_knuckles_floor" parent="." unique_id=2066146015 instance=ExtResource("10_oab3y")]
 position = Vector2(953, 483)
+
+[node name="Note" parent="." unique_id=1826667186 instance=ExtResource("11_n257l")]
+position = Vector2(2812, -1813)

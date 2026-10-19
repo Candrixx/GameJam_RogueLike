@@ -22,15 +22,12 @@ config/icon="uid://drg4lkpwyxslq"
 [autoload]
 
 DialogSystem="*uid://cw8fm13sm2wb7"
+BgMusic="*uid://dvoaxe4hsxkea"
+GameManager="*uid://qhhlgl1nru5g"
 
 [display]
 
 window/size/mode=2
-
-[autoload]
-
-BgMusic="*uid://dvoaxe4hsxkea"
-GameManager="*uid://qhhlgl1nru5g"
 
 [global_group]
 
