@@ -1,12 +1,8 @@
-[gd_scene format=3 uid="uid://5blfouo4xkxb"]
+[gd_scene format=3 uid="uid://4mghwgus7ayt"]
 
-[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/base_item.tscn" id="1_wndd3"]
-[ext_resource type="Texture2D" uid="uid://b43gj1weqstje" path="res://Sprites/knife 1.png" id="2_6crqx"]
+[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/items/base_item.tscn" id="1_wndd3"]
 
-[node name="Brass knuckles" unique_id=311614790 instance=ExtResource("1_wndd3")]
-weapon_name = "Brass Knuckles"
-
-[node name="Sprite2D" parent="." index="0" unique_id=1535842408]
-position = Vector2(3.8146973e-06, 4.7683716e-07)
-scale = Vector2(0.07069603, 0.070062906)
-texture = ExtResource("2_6crqx")
+[node name="brass_knuckles" unique_id=311614790 instance=ExtResource("1_wndd3")]
+weapon_name = "Knuckles"
+damage = 10
+knockback_force = 300.0

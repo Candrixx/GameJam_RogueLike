@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://daob44c7cl1se"]
+
+[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/items/base_item.tscn" id="1_yecho"]
+
+[node name="baton" unique_id=311614790 instance=ExtResource("1_yecho")]
+weapon_name = "Baton"
+damage = 25

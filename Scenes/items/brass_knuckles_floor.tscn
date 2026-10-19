@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://c0h2rij0ubk5l"]
+
+[ext_resource type="PackedScene" uid="uid://d2nat8sxwcw0w" path="res://Scenes/items/item_floor_base.tscn" id="1_5o6kp"]
+[ext_resource type="Texture2D" uid="uid://bakfa0d1bmq34" path="res://Assets/sprites/objects/puño.png" id="2_5kuam"]
+[ext_resource type="PackedScene" uid="uid://4mghwgus7ayt" path="res://Scenes/items/brass_knuckles.tscn" id="2_h10sq"]
+
+[node name="brass_knuckles_floor" unique_id=552979034 instance=ExtResource("1_5o6kp")]
+weapon_to_equiped = ExtResource("2_h10sq")
+
+[node name="Sprite2D" parent="." index="1" unique_id=1544224068]
+texture = ExtResource("2_5kuam")
