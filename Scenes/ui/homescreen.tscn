@@ -35,13 +35,15 @@ expand_mode = 1
 [node name="Titulo" type="TextureRect" parent="." unique_id=537349638]
 self_modulate = Color(1.380357, 1.380357, 1.380357, 1)
 layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.84900004
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.58500004
-offset_left = -463.04803
-offset_bottom = -0.08001709
-grow_horizontal = 0
+anchor_bottom = 1.0
+offset_left = 600.0
+offset_top = 35.0
+offset_right = -31.0
+offset_bottom = -326.0
+grow_horizontal = 2
+grow_vertical = 2
 texture = ExtResource("2_h3gr5")
 expand_mode = 1
 
