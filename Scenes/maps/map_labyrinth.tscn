@@ -4,11 +4,12 @@
 [ext_resource type="Texture2D" uid="uid://7qbyj1lter2t" path="res://Assets/tiles/PAREDES def.png" id="2_gabxc"]
 [ext_resource type="PackedScene" uid="uid://diigow32cjgk0" path="res://Scenes/characters/character.tscn" id="3_gabxc"]
 [ext_resource type="PackedScene" uid="uid://dwqq44fgg0maj" path="res://Scenes/items/Light.tscn" id="4_pbbxr"]
-[ext_resource type="PackedScene" uid="uid://0fkgihh4nq34" path="res://Scenes/items/sword_floor.tscn" id="5_ratia"]
 [ext_resource type="Texture2D" uid="uid://b4nnul03x3rer" path="res://Assets/sprites/enemies/common/fase 2 espalda.png" id="6_ij2n8"]
 [ext_resource type="Texture2D" uid="uid://ylq3486wql1v" path="res://Assets/sprites/enemies/common/fase 1.png" id="7_6pn7r"]
 [ext_resource type="Script" uid="uid://biirk8suyt0b6" path="res://Scripts/grunt.gd" id="7_n257l"]
 [ext_resource type="Texture2D" uid="uid://c3r8a32tau1di" path="res://Assets/sprites/enemies/common/fase 2.png" id="7_wv7ue"]
+[ext_resource type="PackedScene" uid="uid://y7swrtjmrmpj" path="res://Scenes/items/baton_floor.tscn" id="9_6pn7r"]
+[ext_resource type="PackedScene" uid="uid://c0h2rij0ubk5l" path="res://Scenes/items/brass_knuckles_floor.tscn" id="10_oab3y"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ratia"]
 texture = ExtResource("2_d3g55")
@@ -254,5 +255,8 @@ animation = &"walk_up"
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=650394155]
 color = Color(0.23392546, 0.23392546, 0.23392543, 1)
 
-[node name="sword_floor" parent="." unique_id=552979034 instance=ExtResource("5_ratia")]
-position = Vector2(1341, 431)
+[node name="baton_floor" parent="." unique_id=552979034 instance=ExtResource("9_6pn7r")]
+position = Vector2(1458, 462)
+
+[node name="brass_knuckles_floor" parent="." unique_id=2066146015 instance=ExtResource("10_oab3y")]
+position = Vector2(953, 483)

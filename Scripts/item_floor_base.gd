@@ -10,7 +10,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if body is Character or body.has_method("equip_weapon"):
 		character_in = body
 		can_take = true
-		print("Preiona E para tomarlo")
+		print("Presiona E para tomarlo")
 
 func _on_body_exited(body: Node2D) -> void:
 	if body == character_in:
