@@ -238,9 +238,7 @@ func die() -> void:
 	velocity = Vector2.ZERO
 	knockback_velocity = Vector2.ZERO
 
-	var player = get_tree().get_first_node_in_group(player_group)
-	if player and player.has_method("add_kill"):
-		player.add_kill()
+	GameManager.add_kill()
 
 	var collider = find_child("*CollisionShape2D*", true, false) as CollisionShape2D
 	if collider:
