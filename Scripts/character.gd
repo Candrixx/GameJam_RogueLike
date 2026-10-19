@@ -10,6 +10,48 @@ Fame, greatness, I never wanted any of that. I didn’t even want to stand out. 
 
 But being a cop is inherently violent in a way, isn’t it? Does that mean that violence is inherently a part of me?"""
 
+const PACIFIST_MORALITY_THOUGHTS: Array[String] = [
+	"Hold on... I'm a police officer, not an executioner. Guide me around it—we don't need to use lethal force.",
+	"Look at how slow it moves... It's not a threat if we keep our distance. Please, help me uphold my oath.",
+	"I swore to serve and protect... Don't make me swing this weapon unless we have no other choice.",
+	"My hand is trembling over my badge... Just lead me past it, okay? Let's keep our hands clean.",
+	"We don't have to beat every shadow in our path... Keep me moving forward, please.",
+	"Every blow leaves a stain a badge can't cover... Let's just slip past it."
+]
+
+const KILL_THOUGHTS_STAGE_1: Array[String] = [
+	"Wait... is that another suspect ahead? You want me to use force again, don't you?",
+	"There's blood on my uniform now... Tell me we're only doing what cops have to do to survive.",
+	"Why are you steering me straight toward it? Are we keeping the peace... or looking for an excuse to strike?"
+]
+
+const KILL_THOUGHTS_STAGE_2: Array[String] = [
+	"Another threat in our jurisdiction... Go on, make me swing. Put them down before they even flinch!",
+	"To serve and protect... No, down here the law is whatever weapon we're holding, isn't it?",
+	"Look at it staring at my badge... It's guilty. They're all guilty! Tell me to strike!"
+]
+
+const KILL_THOUGHTS_STAGE_3: Array[String] = [
+	"DON'T LET IT BREATHE! Move me closer—let's show this shadow what police force really means!",
+	"There's no innocence down here! You want blood, I'll give you blood—just press the button, partner!",
+	"My head is spinning, hahaha... No more rules, no more reports! Just you, me, and the next target!"
+]
+
+const WALL_NOTE_INSANITY_STAGE_1: Array[String] = [
+	"My badge is stained... You saw it, right? It was self-defense. Keep guiding me—tell me I'm still a good cop.",
+	"My pulse won't slow down... On the force, they said the first strike is the hardest. Why are you making it feel so easy?"
+]
+
+const WALL_NOTE_INSANITY_STAGE_2: Array[String] = [
+	"The blood won't come off my uniform... Are you doing this to my mind, or was this brutality always hiding behind my badge?",
+	"I can hear police sirens screaming in my head... Don't stop now, partner. Help me clear every last corridor."
+]
+
+const WALL_NOTE_INSANITY_STAGE_3: Array[String] = [
+	"Sanity? Law? Who needs an oath when we hold authority over life and death! Keep pushing me forward, partner—let's finish this patrol in blood!",
+	"Look at my hands—soaked in red and steady as stone! You and I are the judge, the jury, and the trigger down here!"
+]
+
 @export var speed = 450
 @export var accelaration = 35
 
@@ -34,6 +76,15 @@ var _damage_flash_intensity: float = 0.0
 var _injury_pulse_time: float = 0.0
 var _intro_note_advance_requested: bool = false
 
+# Organic inner thought / sanity wall note HUD (no titles)
+var _thought_panel: PanelContainer = null
+var _thought_body_label: Label = null
+var _thought_tween: Tween = null
+var _morality_thought_index: int = 0
+var _wall_insanity_index: int = 0
+var _global_morality_cooldown: float = 0.0
+var _triggered_by_flashback_note: bool = false
+
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -43,10 +94,13 @@ func _ready() -> void:
 	_setup_labyrinth_props_and_void()
 	_setup_watch_overlay()
 	_setup_damage_indicator()
+	_setup_thought_hud()
 	call_deferred("_show_intro_notes")
 
 func _process(delta: float) -> void:
 	_update_damage_indicator(delta)
+	if _global_morality_cooldown > 0.0:
+		_global_morality_cooldown = maxf(0.0, _global_morality_cooldown - delta)
 
 func _physics_process(delta: float) -> void:
 	if is_reading_intro:
@@ -106,11 +160,91 @@ func equip_weapon(new_weapon: PackedScene):
 		weapon_equiped.position = Vector2.ZERO
 		weapon_equiped.rotation = 0
 
+func _get_total_kills() -> int:
+	if get_node_or_null("/root/GameManager") and GameManager.get("kill_count") != null:
+		return maxi(kills, int(GameManager.kill_count))
+	return kills
+
 func add_kill() -> void:
 	kills += 1
 	if get_node_or_null("/root/GameManager") and GameManager.has_method("add_kill"):
 		GameManager.add_kill()
-	print("Enemies defeated: ", kills)
+	var total := _get_total_kills()
+	print("Enemies defeated: ", total, " | Genocide route active")
+	_global_morality_cooldown = 3.5
+
+	if total == 1:
+		_display_inner_thought("I killed it... Why did you make me strike? It was self-defense, right? Tell me that was lawful force...", Color(0.92, 0.78, 0.74, 0.98), 4.8)
+	elif total == 2:
+		_display_inner_thought("Another one down... My hands are shaking, or maybe they're finally steady. You saw it resisting too, didn't you?", Color(0.93, 0.68, 0.64, 0.98), 4.8)
+	elif total == 3:
+		_display_inner_thought("Three down... Look at them fall. We wear the badge in this place—we decide who's guilty, don't we?", Color(0.94, 0.56, 0.52, 0.98), 4.8)
+	elif total == 4:
+		_display_inner_thought("Stop resisting! ...Wait, it wasn't even fighting back. Why am I smiling? Why aren't you stopping me?!", Color(0.95, 0.44, 0.42, 0.98), 5.0)
+	else:
+		_display_inner_thought("CLEAN THE STREETS! PUT THEM ALL DOWN! ...Look at us, partner—the badge looks so much better soaked in red!", Color(0.96, 0.34, 0.34, 0.98), 5.0)
+
+func trigger_enemy_morality_thought() -> void:
+	if is_dead or is_reading_intro or _global_morality_cooldown > 0.0:
+		return
+	_global_morality_cooldown = 6.5
+
+	var total := _get_total_kills()
+	var line := ""
+	var text_col := Color(0.92, 0.90, 0.85, 0.98)
+
+	if total <= 0:
+		line = PACIFIST_MORALITY_THOUGHTS[_morality_thought_index % PACIFIST_MORALITY_THOUGHTS.size()]
+	elif total <= 2:
+		line = KILL_THOUGHTS_STAGE_1[_morality_thought_index % KILL_THOUGHTS_STAGE_1.size()]
+		text_col = Color(0.92, 0.78, 0.74, 0.98)
+	elif total <= 4:
+		line = KILL_THOUGHTS_STAGE_2[_morality_thought_index % KILL_THOUGHTS_STAGE_2.size()]
+		text_col = Color(0.94, 0.56, 0.52, 0.98)
+	else:
+		line = KILL_THOUGHTS_STAGE_3[_morality_thought_index % KILL_THOUGHTS_STAGE_3.size()]
+		text_col = Color(0.96, 0.36, 0.36, 0.98)
+
+	_morality_thought_index += 1
+	_display_inner_thought(line, text_col, 4.4)
+
+func show_sanity_wall_note_thought(base_text: String) -> void:
+	if is_dead:
+		return
+	_global_morality_cooldown = 5.0
+	var total := _get_total_kills()
+	var final_text := base_text
+	var text_col := Color(0.94, 0.92, 0.86, 0.98)
+
+	if total >= 5:
+		final_text = WALL_NOTE_INSANITY_STAGE_3[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_3.size()]
+		text_col = Color(0.96, 0.38, 0.38, 0.98)
+		_wall_insanity_index += 1
+	elif total >= 3:
+		final_text = WALL_NOTE_INSANITY_STAGE_2[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_2.size()]
+		text_col = Color(0.94, 0.58, 0.54, 0.98)
+		_wall_insanity_index += 1
+	elif total >= 1:
+		final_text = WALL_NOTE_INSANITY_STAGE_1[_wall_insanity_index % WALL_NOTE_INSANITY_STAGE_1.size()]
+		text_col = Color(0.92, 0.78, 0.74, 0.98)
+		_wall_insanity_index += 1
+
+	_display_inner_thought(final_text, text_col, 5.6)
+
+func trigger_flashback_note_drain() -> void:
+	if is_dead:
+		return
+	_triggered_by_flashback_note = true
+	_clear_phase_one_wall_notes()
+	if _watch_overlay and _watch_overlay.has_method("trigger_rapid_drain_to_zero"):
+		_watch_overlay.trigger_rapid_drain_to_zero()
+	else:
+		die_from_timeout()
+
+func _clear_phase_one_wall_notes() -> void:
+	var spawner := get_tree().get_first_node_in_group("labyrinth_props_spawner")
+	if spawner and spawner.has_method("clear_phase_one_wall_notes"):
+		spawner.clear_phase_one_wall_notes()
 
 func register_damage_dealt(_amount: int) -> void:
 	has_dealt_damage_dealt_in_phase_one()
@@ -167,6 +301,8 @@ func die() -> void:
 	await get_tree().create_timer(0.35).timeout
 	await _show_enemy_death_note()
 
+	if get_node_or_null("/root/GameManager") and GameManager.has_method("reset_kills"):
+		GameManager.reset_kills()
 	get_tree().reload_current_scene()
 
 func _show_enemy_death_note() -> void:
@@ -314,6 +450,10 @@ func die_from_timeout() -> void:
 	_damage_flash_intensity = 1.0
 	_update_damage_indicator(0.0)
 	velocity = Vector2.ZERO
+	_clear_phase_one_wall_notes()
+
+	if _thought_panel:
+		_thought_panel.visible = false
 
 	# Close watch overlay so the player sees the character dying animation
 	if _watch_overlay and _watch_overlay.has_method("force_close"):
@@ -331,6 +471,8 @@ func die_from_timeout() -> void:
 	# Whether the player dealt damage to any enemy in the first phase or not,
 	# show the flashback monologue with the Special Elite font when time runs out.
 	await _show_timeout_flashback()
+	if _triggered_by_flashback_note and get_node_or_null("/root/GameManager") and GameManager.has_method("advance_to_phase_two"):
+		GameManager.advance_to_phase_two()
 	get_tree().reload_current_scene()
 
 func _show_timeout_flashback() -> void:
@@ -411,6 +553,69 @@ func _show_timeout_flashback() -> void:
 	await fade_out.finished
 	layer.queue_free()
 
+func _setup_thought_hud() -> void:
+	if not _hud_layer:
+		return
+
+	_thought_panel = PanelContainer.new()
+	_thought_panel.name = "InnerThoughtPanel"
+	_thought_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	_thought_panel.offset_left = -460.0
+	_thought_panel.offset_top = -140.0
+	_thought_panel.offset_right = 460.0
+	_thought_panel.offset_bottom = -36.0
+	_thought_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_thought_panel.visible = false
+	_thought_panel.modulate.a = 0.0
+
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.02, 0.02, 0.026, 0.86)
+	style.border_color = Color(0.24, 0.23, 0.20, 0.65)
+	style.set_border_width_all(1)
+	style.set_corner_radius_all(3)
+	style.shadow_color = Color(0.0, 0.0, 0.0, 0.82)
+	style.shadow_size = 10
+	style.content_margin_left = 28.0
+	style.content_margin_right = 28.0
+	style.content_margin_top = 16.0
+	style.content_margin_bottom = 16.0
+	_thought_panel.add_theme_stylebox_override("panel", style)
+	_hud_layer.add_child(_thought_panel)
+
+	var custom_font: FontFile = null
+	if ResourceLoader.exists("res://Assets/fonts/SpecialElite-Regular.ttf"):
+		custom_font = load("res://Assets/fonts/SpecialElite-Regular.ttf")
+
+	_thought_body_label = Label.new()
+	_thought_body_label.custom_minimum_size = Vector2(860.0, 0.0)
+	_thought_body_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_thought_body_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_thought_body_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	if custom_font:
+		_thought_body_label.add_theme_font_override("font", custom_font)
+	_thought_body_label.add_theme_font_size_override("font_size", 24)
+	_thought_body_label.add_theme_color_override("font_color", Color(0.92, 0.90, 0.85, 0.98))
+	_thought_body_label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
+	_thought_body_label.add_theme_constant_override("outline_size", 5)
+	_thought_panel.add_child(_thought_body_label)
+
+func _display_inner_thought(body_text: String, text_col: Color = Color(0.92, 0.90, 0.85, 0.98), duration: float = 4.2) -> void:
+	if not _thought_panel:
+		return
+	_thought_body_label.text = body_text
+	_thought_body_label.add_theme_color_override("font_color", text_col)
+
+	_thought_panel.visible = true
+	if _thought_tween and _thought_tween.is_valid():
+		_thought_tween.kill()
+	_thought_tween = create_tween()
+	_thought_tween.tween_property(_thought_panel, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE)
+	_thought_tween.tween_interval(duration)
+	_thought_tween.tween_property(_thought_panel, "modulate:a", 0.0, 0.55).set_trans(Tween.TRANS_SINE)
+	_thought_tween.tween_callback(func():
+		_thought_panel.visible = false
+	)
+
 func _setup_damage_indicator() -> void:
 	_hud_layer = CanvasLayer.new()
 	_hud_layer.name = "PlayerDamageHUD"
@@ -473,6 +678,16 @@ func _update_damage_indicator(delta: float) -> void:
 	_damage_border_drawer.queue_redraw()
 
 func _show_intro_notes() -> void:
+	if get_node_or_null("/root/GameManager"):
+		if GameManager.get("current_phase") != null and GameManager.current_phase >= 2:
+			if _watch_overlay and _watch_overlay.has_method("start_countdown"):
+				_watch_overlay.start_countdown()
+			return
+		if GameManager.get("intro_notes_shown") == true:
+			if _watch_overlay and _watch_overlay.has_method("start_countdown"):
+				_watch_overlay.start_countdown()
+			return
+
 	is_reading_intro = true
 	var prev_process_mode := process_mode
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -502,8 +717,6 @@ func _show_intro_notes() -> void:
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(center)
 
-	# Clean blood-free note texture ("nota_limpia.png" composed at 1:1 pixel ratio without deformation)
-	# Native size is 1040 x 529 -> displayed at 1144 x 582 (exact 1.1x uniform aspect ratio for fullscreen legibility)
 	var note_w := 1144.0
 	var note_h := 582.0
 	var note_tex: Texture2D = null
@@ -528,7 +741,6 @@ func _show_intro_notes() -> void:
 	note_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	note_holder.add_child(note_bg)
 
-	# Content container padded inside the torn dark edges of the note
 	var margin := MarginContainer.new()
 	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
 	margin.add_theme_constant_override("margin_left", 140)
@@ -640,13 +852,11 @@ func _show_intro_notes() -> void:
 	sub2_lbl.add_theme_color_override("font_color", Color(0.14, 0.14, 0.12, 0.85))
 	note2_box.add_child(sub2_lbl)
 
-	# Connect gui_input on root so any mouse click on the screen also triggers advance
 	root.gui_input.connect(func(ev: InputEvent) -> void:
 		if ev is InputEventMouseButton and ev.pressed:
 			_intro_note_advance_requested = true
 	)
 
-	# Subtle paper entrance animation
 	note_holder.modulate.a = 0.0
 	note_holder.scale = Vector2(0.94, 0.94)
 	var t_in := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel(true)
@@ -654,10 +864,8 @@ func _show_intro_notes() -> void:
 	t_in.tween_property(note_holder, "scale", Vector2.ONE, 0.32).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await t_in.finished
 
-	# Wait for player to press any key or click to flip to the Controls note
 	await _wait_for_note_advance()
 
-	# Flip transition to Note 2 (Controls)
 	var t_flip_out := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS).set_parallel(true)
 	t_flip_out.tween_property(note_holder, "modulate:a", 0.0, 0.15)
 	t_flip_out.tween_property(note_holder, "scale", Vector2(0.96, 0.96), 0.15)
@@ -671,7 +879,6 @@ func _show_intro_notes() -> void:
 	t_flip_in.tween_property(note_holder, "scale", Vector2.ONE, 0.20).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await t_flip_in.finished
 
-	# Wait for player to press any key or click to close the note and start playing
 	await _wait_for_note_advance()
 
 	var t_out := create_tween().set_pause_mode(Tween.TWEEN_PAUSE_PROCESS)
@@ -688,7 +895,6 @@ func _show_intro_notes() -> void:
 		_watch_overlay.start_countdown()
 
 func _wait_for_note_advance() -> void:
-	# Wait until all keys/buttons are released first so a held click/key doesn't skip
 	var release_guard := 0
 	while Input.is_anything_pressed() and release_guard < 30:
 		await get_tree().process_frame
@@ -713,14 +919,12 @@ func _input(event: InputEvent) -> void:
 		_intro_note_advance_requested = true
 
 func _setup_labyrinth_props_and_void() -> void:
-	# Ensure the default viewport background (where there are no structures) is solid pitch black
 	RenderingServer.set_default_clear_color(Color(0, 0, 0, 1))
 
 	var parent_map := get_parent()
 	if not parent_map:
 		return
 
-	# Disable duplicate GatilloDialogo at spawn if present so our clean 2-step English notes handle the intro
 	var gatillo := parent_map.get_node_or_null("GatilloDialogo")
 	if gatillo:
 		gatillo.queue_free()

@@ -2,6 +2,7 @@ extends Area2D
 
 @onready var note_ui: CanvasLayer = $CanvasLayer
 var player_inside: bool = false
+var _triggered: bool = false
 var _prompt_label: Label = null
 
 func _ready() -> void:
@@ -30,13 +31,21 @@ func _ready() -> void:
 	add_child(_prompt_label)
 
 func _process(_delta: float) -> void:
+	if _triggered:
+		return
 	if player_inside and Input.is_action_just_pressed("interact"):
-		if not note_ui.visible:
-			note_ui.visible = true
-		else:
-			queue_free()
+		_triggered = true
+		if _prompt_label:
+			_prompt_label.visible = false
+		var player := get_tree().get_first_node_in_group("player")
+		if player and player.has_method("trigger_flashback_note_drain"):
+			player.trigger_flashback_note_drain()
+		visible = false
+		queue_free()
 
 func _on_body_entered(body: Node2D) -> void:
+	if _triggered:
+		return
 	if body.name == "character" or body is Character:
 		player_inside = true
 		if _prompt_label:

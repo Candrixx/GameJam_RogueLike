@@ -7,6 +7,8 @@ const INITIAL_TIME := 240.0 # 4 minutes in seconds
 
 var is_open: bool = false
 var countdown_started: bool = false
+var is_rapid_draining: bool = false
+var _rapid_drain_speed: float = 160.0
 var time_left: float = INITIAL_TIME
 var elapsed_watch_time: float = 0.0
 var _timeout_triggered: bool = false
@@ -18,21 +20,129 @@ var _dark_bg: ColorRect
 var _hand_tex_rect: TextureRect
 var _dial_drawer: Control
 var _timer_panel: PanelContainer
+var _title_label: Label
 var _timer_label: Label
 var _sub_label: Label
 var _fade_tween: Tween = null
+
+# Mini warning banner HUD (visible even when watch overlay is closed)
+var _warning_panel: PanelContainer
+var _warning_label: Label
+var _warning_sub_label: Label
+var _warning_tween: Tween = null
+var _warned_180: bool = false
+var _warned_120: bool = false
+var _warned_60: bool = false
+var _warned_30: bool = false
+
+# Watch sound effects
+var _tick_player: AudioStreamPlayer
+var _chime_player: AudioStreamPlayer
+var _sfx_tick: AudioStreamWAV
+var _sfx_tock: AudioStreamWAV
+var _sfx_chime: AudioStreamWAV
+var _sfx_urgent_chime: AudioStreamWAV
+var _tick_accumulator: float = 0.0
+var _is_tock: bool = false
 
 func _ready() -> void:
 	layer = 100
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	if ResourceLoader.exists(CUSTOM_FONT_PATH):
 		_custom_font = load(CUSTOM_FONT_PATH)
+	_setup_watch_audio()
 	_build_ui()
+	_build_warning_banner()
 	_root_control.visible = false
 	_root_control.modulate.a = 0.0
 
 func start_countdown() -> void:
 	countdown_started = true
+
+func trigger_rapid_drain_to_zero() -> void:
+	if _timeout_triggered:
+		return
+	countdown_started = true
+	is_rapid_draining = true
+	# Drain whatever time remains to 0 in ~1.8 seconds (minimum 90s/sec)
+	_rapid_drain_speed = maxf(time_left / 1.75, 95.0)
+	if _title_label:
+		_title_label.text = "Time is collapsing..."
+		_title_label.add_theme_color_override("font_color", Color(0.88, 0.22, 0.22, 0.98))
+	if not is_open:
+		toggle_watch()
+	_play_chime(true)
+	_show_time_warning("TIME IS COLLAPSING!", "00:00 Approaches...", true)
+
+func _setup_watch_audio() -> void:
+	_tick_player = AudioStreamPlayer.new()
+	_tick_player.volume_db = -6.0
+	add_child(_tick_player)
+
+	_chime_player = AudioStreamPlayer.new()
+	_chime_player.volume_db = -4.0
+	add_child(_chime_player)
+
+	_sfx_tick = _generate_watch_tick_wav(2550.0, 0.032, 0.55)
+	_sfx_tock = _generate_watch_tick_wav(1850.0, 0.036, 0.48)
+	_sfx_chime = _generate_watch_chime_wav(740.0, 1110.0, 0.42, 0.42)
+	_sfx_urgent_chime = _generate_watch_chime_wav(880.0, 1320.0, 0.55, 0.55)
+
+func _generate_watch_tick_wav(freq: float, duration: float, amp: float) -> AudioStreamWAV:
+	var mix_rate := 22050
+	var samples := int(duration * mix_rate)
+	var data := PackedByteArray()
+	data.resize(samples * 2)
+	for i in range(samples):
+		var t := float(i) / float(mix_rate)
+		var env := exp(-t * 115.0)
+		# Crisp mechanical escapement click + metallic ring
+		var click := sin(TAU * freq * t) * 0.65 + sin(TAU * (freq * 1.92) * t) * 0.35
+		if i < 28:
+			click += (1.0 if i % 2 == 0 else -1.0) * 0.45
+		var val := clampf(click * env * amp, -1.0, 1.0)
+		var pcm := int(val * 32767.0)
+		data.encode_s16(i * 2, pcm)
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = mix_rate
+	wav.stereo = false
+	wav.data = data
+	return wav
+
+func _generate_watch_chime_wav(f1: float, f2: float, duration: float, amp: float) -> AudioStreamWAV:
+	var mix_rate := 22050
+	var samples := int(duration * mix_rate)
+	var data := PackedByteArray()
+	data.resize(samples * 2)
+	for i in range(samples):
+		var t := float(i) / float(mix_rate)
+		var env := exp(-t * 7.2) * minf(t * 120.0, 1.0)
+		var wave := sin(TAU * f1 * t) * 0.6 + sin(TAU * f2 * t) * 0.3 + sin(TAU * (f1 * 0.5) * t) * 0.2
+		var val := clampf(wave * env * amp, -1.0, 1.0)
+		var pcm := int(val * 32767.0)
+		data.encode_s16(i * 2, pcm)
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	wav.mix_rate = mix_rate
+	wav.stereo = false
+	wav.data = data
+	return wav
+
+func _play_tick(loud: bool = false) -> void:
+	if not _tick_player:
+		return
+	_tick_player.volume_db = -3.5 if loud else -7.5
+	_tick_player.stream = _sfx_tock if _is_tock else _sfx_tick
+	_is_tock = not _is_tock
+	_tick_player.play()
+
+func _play_chime(urgent: bool = false) -> void:
+	if not _chime_player:
+		return
+	_chime_player.volume_db = -2.5 if urgent else -5.0
+	_chime_player.stream = _sfx_urgent_chime if urgent else _sfx_chime
+	_chime_player.play()
 
 func _build_ui() -> void:
 	_root_control = Control.new()
@@ -97,16 +207,16 @@ func _build_ui() -> void:
 	vbox.add_theme_constant_override("separation", 6)
 	_timer_panel.add_child(vbox)
 
-	var title_lbl := Label.new()
-	title_lbl.text = "Hurry, find the exit"
-	title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title_label = Label.new()
+	_title_label.text = "Hurry, find the exit"
+	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	if _custom_font:
-		title_lbl.add_theme_font_override("font", _custom_font)
-	title_lbl.add_theme_font_size_override("font_size", 18)
-	title_lbl.add_theme_color_override("font_color", Color(0.66, 0.63, 0.58, 0.92))
-	title_lbl.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
-	title_lbl.add_theme_constant_override("outline_size", 5)
-	vbox.add_child(title_lbl)
+		_title_label.add_theme_font_override("font", _custom_font)
+	_title_label.add_theme_font_size_override("font_size", 18)
+	_title_label.add_theme_color_override("font_color", Color(0.66, 0.63, 0.58, 0.92))
+	_title_label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
+	_title_label.add_theme_constant_override("outline_size", 5)
+	vbox.add_child(_title_label)
 
 	_timer_label = Label.new()
 	_timer_label.text = "04:00.00"
@@ -135,8 +245,83 @@ func _build_ui() -> void:
 	_sub_label.add_theme_constant_override("outline_size", 4)
 	_root_control.add_child(_sub_label)
 
+func _build_warning_banner() -> void:
+	_warning_panel = PanelContainer.new()
+	_warning_panel.name = "TimeWarningBanner"
+	_warning_panel.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	_warning_panel.offset_left = -310.0
+	_warning_panel.offset_top = 22.0
+	_warning_panel.offset_right = 310.0
+	_warning_panel.offset_bottom = 108.0
+	_warning_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_warning_panel.visible = false
+	_warning_panel.modulate.a = 0.0
+
+	var w_style := StyleBoxFlat.new()
+	w_style.bg_color = Color(0.03, 0.03, 0.038, 0.92)
+	w_style.border_color = Color(0.55, 0.16, 0.16, 0.88)
+	w_style.set_border_width_all(2)
+	w_style.set_corner_radius_all(3)
+	w_style.shadow_color = Color(0.0, 0.0, 0.0, 0.85)
+	w_style.shadow_size = 8
+	w_style.content_margin_left = 22.0
+	w_style.content_margin_right = 22.0
+	w_style.content_margin_top = 10.0
+	w_style.content_margin_bottom = 10.0
+	_warning_panel.add_theme_stylebox_override("panel", w_style)
+	add_child(_warning_panel)
+
+	var vbox := VBoxContainer.new()
+	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
+	vbox.add_theme_constant_override("separation", 4)
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_warning_panel.add_child(vbox)
+
+	_warning_label = Label.new()
+	_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if _custom_font:
+		_warning_label.add_theme_font_override("font", _custom_font)
+	_warning_label.add_theme_font_size_override("font_size", 24)
+	_warning_label.add_theme_color_override("font_color", Color(0.88, 0.84, 0.78, 0.98))
+	_warning_label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
+	_warning_label.add_theme_constant_override("outline_size", 6)
+	vbox.add_child(_warning_label)
+
+	_warning_sub_label = Label.new()
+	_warning_sub_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if _custom_font:
+		_warning_sub_label.add_theme_font_override("font", _custom_font)
+	_warning_sub_label.add_theme_font_size_override("font_size", 16)
+	_warning_sub_label.add_theme_color_override("font_color", Color(0.68, 0.64, 0.58, 0.90))
+	vbox.add_child(_warning_sub_label)
+
+func _show_time_warning(main_text: String, sub_text: String, is_urgent: bool = false) -> void:
+	if not _warning_panel:
+		return
+	_warning_label.text = main_text
+	_warning_sub_label.text = sub_text
+	if is_urgent:
+		_warning_label.add_theme_color_override("font_color", Color(0.92, 0.24, 0.24, 0.98))
+		_warning_sub_label.add_theme_color_override("font_color", Color(0.82, 0.55, 0.50, 0.95))
+	else:
+		_warning_label.add_theme_color_override("font_color", Color(0.88, 0.84, 0.76, 0.98))
+		_warning_sub_label.add_theme_color_override("font_color", Color(0.68, 0.64, 0.58, 0.90))
+
+	_warning_panel.visible = true
+	if _warning_tween and _warning_tween.is_valid():
+		_warning_tween.kill()
+	_warning_tween = create_tween()
+	_warning_tween.tween_property(_warning_panel, "modulate:a", 1.0, 0.25).set_trans(Tween.TRANS_SINE)
+	if not is_urgent and time_left > 30.0:
+		_warning_tween.tween_interval(3.4)
+		_warning_tween.tween_property(_warning_panel, "modulate:a", 0.0, 0.55).set_trans(Tween.TRANS_SINE)
+		_warning_tween.tween_callback(func():
+			if time_left > 30.0:
+				_warning_panel.visible = false
+		)
+
 func _input(event: InputEvent) -> void:
-	if _timeout_triggered:
+	if _timeout_triggered or is_rapid_draining:
 		return
 	if character and (character.get("is_dead") or character.get("is_reading_intro")):
 		return
@@ -148,6 +333,7 @@ func toggle_watch() -> void:
 	if _timeout_triggered:
 		return
 	is_open = not is_open
+	_play_tick(true)
 
 	if _fade_tween and _fade_tween.is_valid():
 		_fade_tween.kill()
@@ -173,17 +359,29 @@ func force_close() -> void:
 	if _root_control:
 		_root_control.modulate.a = 0.0
 		_root_control.visible = false
+	if _warning_panel:
+		_warning_panel.visible = false
 
 func _process(delta: float) -> void:
 	if character and (character.get("is_reading_intro") or character.get("is_dead")):
 		return
 	if countdown_started and not _timeout_triggered:
-		elapsed_watch_time += delta
+		var dt := delta
+		if is_rapid_draining:
+			elapsed_watch_time += delta * 28.0
+			dt = delta * _rapid_drain_speed
+		else:
+			elapsed_watch_time += delta
+
 		if time_left > 0.0:
-			time_left = maxf(time_left - delta, 0.0)
+			time_left = maxf(time_left - dt, 0.0)
+			_check_milestone_warnings()
+			_update_watch_ticking_audio(delta)
+
 			if time_left <= 0.0:
 				time_left = 0.0
 				_timeout_triggered = true
+				is_rapid_draining = false
 				force_close()
 				if character and character.has_method("die_from_timeout"):
 					character.die_from_timeout()
@@ -192,6 +390,57 @@ func _process(delta: float) -> void:
 		_update_timer_label()
 		_dial_drawer.queue_redraw()
 
+func _check_milestone_warnings() -> void:
+	if is_rapid_draining:
+		return
+	if not _warned_180 and time_left <= 180.0 and time_left > 175.0:
+		_warned_180 = true
+		_play_chime(false)
+		_show_time_warning("3 MINUTES REMAINING", "Keep moving through the labyrinth...", false)
+	elif not _warned_120 and time_left <= 120.0 and time_left > 115.0:
+		_warned_120 = true
+		_play_chime(false)
+		_show_time_warning("2 MINUTES REMAINING", "The darkness is closing in...", false)
+	elif not _warned_60 and time_left <= 60.0 and time_left > 55.0:
+		_warned_60 = true
+		_play_chime(true)
+		_show_time_warning("1 MINUTE LEFT!", "Hurry, find a way out!", true)
+	elif not _warned_30 and time_left <= 30.0:
+		_warned_30 = true
+		_play_chime(true)
+		_show_time_warning("30 SECONDS LEFT!", "Time is almost up!", true)
+
+	# Keep live tense countdown updated in the top mini-banner during the last 30 seconds (when watch overlay is closed)
+	if time_left <= 30.0 and time_left > 0.0:
+		if _warning_panel:
+			_warning_panel.visible = not is_open
+			if not is_open:
+				_warning_panel.modulate.a = 0.96
+				var secs := int(ceil(time_left))
+				var pulse := 0.5 + 0.5 * sin(elapsed_watch_time * 9.0)
+				_warning_label.text = "⚠ %02d SECONDS LEFT!" % secs
+				_warning_label.add_theme_color_override("font_color", Color(0.78 + 0.20 * pulse, 0.16, 0.16, 0.98))
+				_warning_sub_label.text = "Hurry, find the exit before time runs out!"
+
+func _update_watch_ticking_audio(delta: float) -> void:
+	var should_tick := is_open or is_rapid_draining or (time_left <= 30.0 and time_left > 0.0)
+	if not should_tick:
+		_tick_accumulator = 0.0
+		return
+
+	var interval := 1.0
+	if is_rapid_draining:
+		interval = 0.065
+	elif time_left <= 10.0:
+		interval = 0.25
+	elif time_left <= 30.0:
+		interval = 0.5
+
+	_tick_accumulator += delta
+	if _tick_accumulator >= interval:
+		_tick_accumulator = fmod(_tick_accumulator, interval)
+		_play_tick(is_open or is_rapid_draining or time_left <= 15.0)
+
 func _update_timer_label() -> void:
 	var total_sec := int(floor(time_left))
 	var mins := total_sec / 60
@@ -199,11 +448,11 @@ func _update_timer_label() -> void:
 	var centis := int(floor((time_left - floor(time_left)) * 100.0))
 	_timer_label.text = "%02d:%02d.%02d" % [mins, secs, centis]
 
-	if time_left <= 10.0:
+	if time_left <= 10.0 or is_rapid_draining:
 		var pulse := 0.5 + 0.5 * sin(elapsed_watch_time * 10.0)
-		_timer_label.add_theme_color_override("font_color", Color(0.62 + 0.15 * pulse, 0.12, 0.12, 0.98))
-	elif time_left <= 25.0:
-		_timer_label.add_theme_color_override("font_color", Color(0.68, 0.42, 0.28, 0.95))
+		_timer_label.add_theme_color_override("font_color", Color(0.72 + 0.22 * pulse, 0.14, 0.14, 0.98))
+	elif time_left <= 30.0:
+		_timer_label.add_theme_color_override("font_color", Color(0.82, 0.36, 0.24, 0.95))
 	else:
 		_timer_label.add_theme_color_override("font_color", Color(0.78, 0.76, 0.70, 0.95))
 
@@ -240,15 +489,15 @@ class _WatchDialControl extends Control:
 		)
 		var radius := draw_h * (108.0 / 1080.0)
 
-		# 1. Arco sombrío de progreso del minuto dentro de la esfera del reloj
+		# 1. Arco sombrío de progreso dentro de la esfera del reloj
 		var ratio := clampf(overlay.time_left / WatchOverlay.INITIAL_TIME, 0.0, 1.0)
 		var start_angle := -PI * 0.5
 		var end_angle := start_angle + TAU * ratio
 		var arc_color := Color(0.16, 0.15, 0.13, 0.26)
-		if overlay.time_left <= 10.0:
-			arc_color = Color(0.45, 0.10, 0.10, 0.36)
-		elif overlay.time_left <= 25.0:
-			arc_color = Color(0.32, 0.18, 0.12, 0.30)
+		if overlay.time_left <= 10.0 or overlay.is_rapid_draining:
+			arc_color = Color(0.55, 0.10, 0.10, 0.42)
+		elif overlay.time_left <= 30.0:
+			arc_color = Color(0.38, 0.18, 0.12, 0.34)
 		if ratio > 0.001:
 			draw_arc(center, radius * 0.78, start_angle, end_angle, 48, arc_color, radius * 0.15, true)
 

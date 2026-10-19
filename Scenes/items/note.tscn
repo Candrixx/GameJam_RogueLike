@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d3ta5dwghxj6w"]
 
-[ext_resource type="Texture2D" uid="uid://bakfa0d1bmq34" path="res://Assets/sprites/objects/puño.png" id="1_xfou2"]
+[ext_resource type="Texture2D" path="res://Assets/sprites/props/prop_papers.png" id="1_xfou2"]
 [ext_resource type="Script" uid="uid://c1g48qchv5gai" path="res://Scripts/note.gd" id="1_xn28b"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
@@ -51,13 +51,13 @@ offset_right = -24.0
 offset_bottom = -24.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "lore ipsum and shit"
+text = "The ink is still wet..."
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=427397265]
-scale = Vector2(0.2, 0.2)
+scale = Vector2(0.85, 0.85)
 texture = ExtResource("1_xfou2")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1604659892]
