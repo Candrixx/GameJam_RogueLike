@@ -130,8 +130,22 @@ var selected_slot: int = 0
 var _inv_icons: Array[TextureRect] = []
 var _inv_select_rect: TextureRect = null
 
+#Dicionario de sonidos relacionados al personaje
+var sounds = {
+	"Walk_Side": {
+		2: preload("res://Assets/Music/Pisada_unica.mp3")
+	},
+	"Walk_Front": {
+		2: preload("res://Assets/Music/Pisada_unica.mp3")
+	},
+	"Walk_Back": {
+		2: preload("res://Assets/Music/Pisada_unica.mp3")
+	}
+}
+
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+@onready var audio_player: AudioStreamPlayer2D = $AnimatedSprite2D/AudioStreamPlayer2D
 
 func _ready() -> void:
 	life = max_life
@@ -179,13 +193,17 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func play_animation(direction: Vector2, prefix: String):
+	var animation_to_play = ""
 	if direction.x != 0:
 		animated_sprite_2d.flip_h = direction.x < 0
-		animated_sprite_2d.play(prefix + "_Side")
+		animation_to_play = prefix + "_Side"
 	elif direction.y < 0:
-		animated_sprite_2d.play(prefix + "_Back")
+		animation_to_play = prefix + "_Back"
 	elif direction.y > 0:
-		animated_sprite_2d.play(prefix + "_Front")
+		animation_to_play = prefix + "_Front"
+		
+	if animated_sprite_2d.animation != animation_to_play:
+		animated_sprite_2d.play(animation_to_play)
 
 func attacking(suffix: String) -> void:
 	is_attacking = true
@@ -1181,3 +1199,13 @@ class _DamageBorderControl extends Control:
 			draw_rect(Rect2(ix0, iy1, ix1 - ix0 + 1.0, size.y - 2.0 * iy1), col)
 			# Right strip
 			draw_rect(Rect2(size.x - ix1, iy1, ix1 - ix0 + 1.0, size.y - 2.0 * iy1), col)
+
+
+func _on_animated_sprite_2d_frame_changed() -> void:
+	# Verificamos si la animación actual existe en nuestro diccionario
+	if sounds.has(animated_sprite_2d.animation):
+		var animation_frames = sounds[animated_sprite_2d.animation] 
+		# Verificamos si este frame específico tiene un sonido asignado
+		if animation_frames.has(animated_sprite_2d.frame):
+			audio_player.stream = animation_frames[animated_sprite_2d.frame]
+			audio_player.play()

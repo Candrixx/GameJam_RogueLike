@@ -1,11 +1,11 @@
-[gd_scene format=3 uid="uid://y7swrtjmrmpj"]
+[gd_scene load_steps=4 format=3 uid="uid://y7swrtjmrmpj"]
 
 [ext_resource type="PackedScene" uid="uid://d2nat8sxwcw0w" path="res://Scenes/items/item_floor_base.tscn" id="1_1gcgu"]
 [ext_resource type="PackedScene" uid="uid://daob44c7cl1se" path="res://Scenes/items/baton.tscn" id="2_4bdvo"]
-[ext_resource type="Texture2D" uid="uid://bwge0b51iwg33" path="res://Assets/sprites/objects/porra.png" id="2_hyiy6"]
+[ext_resource type="Texture2D" uid="uid://b7jcui1y5d7bm" path="res://Assets/sprites/objects/porra.png" id="2_hyiy6"]
 
-[node name="baton_floor" unique_id=552979034 instance=ExtResource("1_1gcgu")]
+[node name="baton_floor" instance=ExtResource("1_1gcgu")]
 weapon_to_equiped = ExtResource("2_4bdvo")
 
-[node name="Sprite2D" parent="." index="1" unique_id=1544224068]
+[node name="Sprite2D" parent="." index="1"]
 texture = ExtResource("2_hyiy6")
