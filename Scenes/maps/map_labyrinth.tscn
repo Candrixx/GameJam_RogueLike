@@ -271,6 +271,8 @@ shape = SubResource("RectangleShape2D_ty0te")
 
 [node name="Boss" parent="." unique_id=523910936 groups=["boss"] instance=ExtResource("12_o8hr2")]
 position = Vector2(954, -12882)
+collision_layer = 4
+collision_mask = 3
 
 [node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=1698896666]
 visible = false

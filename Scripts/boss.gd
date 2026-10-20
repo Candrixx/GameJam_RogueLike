@@ -3,7 +3,7 @@ extends CharacterBody2D
 enum State {IDLE, ATTACKING, DEAD } # añadir luego
 
 @export var max_health: int = 1
-@export var damage: int = 999
+@export var damage: int = 2
 
 @export var eye_max_distance: float = 6.0 
 @export var eye_follow_speed: float = 12.0

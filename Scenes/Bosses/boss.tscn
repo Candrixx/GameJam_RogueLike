@@ -163,7 +163,6 @@ shape = SubResource("CapsuleShape2D_yq25j")
 
 [node name="AttackHitbox" type="Area2D" parent="." unique_id=469760268]
 collision_layer = 4
-collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=352716052]
 position = Vector2(172, 47.2)
