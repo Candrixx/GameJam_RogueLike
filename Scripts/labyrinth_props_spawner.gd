@@ -176,6 +176,20 @@ func _setup_phase_two_purple_barrier(wall_layer: TileMapLayer) -> void:
 		wall_layer.set_cell(Vector2i(18, bx), 0, Vector2i(2, 2))
 	wall_layer.set_cell(Vector2i(18, -37), 0, Vector2i(2, 3))
 	
+	wall_layer.set_cell(Vector2i(-9, -15), 0, Vector2i(2, 0))
+	wall_layer.set_cell(Vector2i(-9, -21), 0, Vector2i(2, 0))
+	wall_layer.set_cell(Vector2i(-9, -14), 0, Vector2i(2, 1))
+	wall_layer.set_cell(Vector2i(-9, -20), 0, Vector2i(2, 1))
+	for bx in [-19, -18, -13, -12,]:
+		wall_layer.set_cell(Vector2i(-9, bx), 0, Vector2i(2, 2))
+	wall_layer.set_cell(Vector2i(-9, -11), 0, Vector2i(2, 3))
+	wall_layer.set_cell(Vector2i(-9, -17), 0, Vector2i(2, 3))
+	
+	wall_layer.set_cell(Vector2i(6, -18), 0, Vector2i(2, 0))
+	wall_layer.set_cell(Vector2i(6, -17), 0, Vector2i(2, 1))
+	wall_layer.set_cell(Vector2i(6, -16), 0, Vector2i(2, 2))
+	wall_layer.set_cell(Vector2i(6, -15), 0, Vector2i(2, 3))
+	
 
 	# Add an explicit StaticBody2D barrier to guarantee solid collision across the blocked passage
 	var barrier := StaticBody2D.new()
@@ -191,6 +205,7 @@ func _setup_phase_two_purple_barrier(wall_layer: TileMapLayer) -> void:
 	col.shape = rect
 	barrier.add_child(col)
 	add_child(barrier)
+
 
 var _phase_two_barrier_body: StaticBody2D = null
 var _phase_two_barrier_sprite: Sprite2D = null
@@ -258,10 +273,22 @@ func unlock_phase_two_barrier() -> void:
 		if _phase_two_barrier_sprite:
 			var tw := create_tween()
 			tw.tween_property(_phase_two_barrier_sprite, "modulate:a", 0.0, 0.45)
+			spawn_boss()
 			await tw.finished
 		if is_instance_valid(_phase_two_barrier_body):
 			_phase_two_barrier_body.queue_free()
 			_phase_two_barrier_body = null
+
+func spawn_boss() -> void:
+	var boss_node = get_tree().get_first_node_in_group("boss")
+	
+	if boss_node and is_instance_valid(boss_node):
+		boss_node.visible = true
+		
+		# Si también lo tenías pausado/desactivado con process_mode:
+		# boss_node.process_mode = Node.PROCESS_MODE_INHERIT
+		
+		print("¡Jefe activado globalmente mediante grupos!")
 
 func _spawn_phase_one_sanity_wall_notes(wall_layer: TileMapLayer) -> void:
 	if not wall_layer or not ResourceLoader.exists(WALL_NOTE_TEXTURE_PATH):

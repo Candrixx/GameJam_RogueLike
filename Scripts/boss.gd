@@ -23,6 +23,7 @@ const ATTACKS = [
 ]
 
 func _ready() -> void:
+	self.visible = false
 	current_health = max_health
 	player_ref = get_tree().get_first_node_in_group("player")
 	

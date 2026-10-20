@@ -6,6 +6,7 @@
 
 [node name="baton_floor" instance=ExtResource("1_1gcgu")]
 weapon_to_equiped = ExtResource("2_4bdvo")
+item_id = "Batoon"
 
 [node name="Sprite2D" parent="." index="1"]
 texture = ExtResource("2_hyiy6")

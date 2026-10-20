@@ -222,9 +222,7 @@ script = ExtResource("1_e22cc")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 position = Vector2(-2, -150)
 sprite_frames = SubResource("SpriteFrames_hndv8")
-animation = &"Walk_Back"
-frame = 2
-frame_progress = 0.92179
+animation = &"Idle_Front"
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="AnimatedSprite2D"]
 

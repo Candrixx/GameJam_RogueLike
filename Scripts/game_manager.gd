@@ -7,6 +7,10 @@ var is_genocide_route: bool = false
 var collected_wall_notes: Dictionary = {}
 var intro_notes_shown: bool = false
 
+var saved_inventory = null
+var saved_selected_slot: int = 0
+var collected_item_ids: Array = []
+
 var phase_two_note_found: bool = false
 
 func add_kill() -> void:

@@ -2,12 +2,15 @@ extends Area2D
 class_name ItemFloor
 
 @export var weapon_to_equiped: PackedScene
+@export var item_id: String
 
 var character_in = null
 var can_take = false
 var _prompt_label: Label = null
 
 func _ready() -> void:
+	if get_node_or_null("/root/GameManager") and item_id in GameManager.collected_item_ids:
+		queue_free()
 	_prompt_label = Label.new()
 	_prompt_label.text = "[E] Pick up"
 	_prompt_label.custom_minimum_size = Vector2(360, 60)
@@ -55,6 +58,8 @@ func take_weapon():
 		if sprite:
 			icon = sprite.texture
 		if character_in.add_to_inventory(weapon_to_equiped, icon):
+			if get_node_or_null("/root/GameManager"):
+				GameManager.collected_item_ids.append(item_id)
 			queue_free()
 	else:
 		character_in.equip_weapon(weapon_to_equiped)

@@ -152,6 +152,14 @@ var admin_mode: bool = false
 @onready var audio_player: AudioStreamPlayer2D = $AnimatedSprite2D/AudioStreamPlayer2D
 
 func _ready() -> void:
+	if get_node_or_null("/root/GameManager") and GameManager.get("saved_inventory") != null:
+		inventory = GameManager.saved_inventory
+		selected_slot = GameManager.saved_selected_slot
+		_refresh_inventory_hud() # Refrescas tu HUD para que se vea tal como lo dejaste
+		
+		# Limpiamos para que no se quede pegado para siempre
+		GameManager.saved_inventory = null
+		
 	life = max_life
 	add_to_group("player")
 	for i in INVENTORY_SLOT_COUNT:
@@ -530,6 +538,8 @@ func die() -> void:
 	await _show_enemy_death_note()
 
 	if get_node_or_null("/root/GameManager") and GameManager.has_method("reset_kills"):
+		GameManager.saved_inventory = inventory.duplicate(true) 
+		GameManager.saved_selected_slot = selected_slot
 		GameManager.reset_kills()
 	get_tree().reload_current_scene()
 
@@ -701,6 +711,8 @@ func die_from_timeout() -> void:
 	await _show_timeout_flashback()
 	if _triggered_by_flashback_note and get_node_or_null("/root/GameManager") and GameManager.has_method("advance_to_phase_two"):
 		GameManager.advance_to_phase_two()
+		GameManager.saved_inventory = inventory.duplicate(true) 
+		GameManager.saved_selected_slot = selected_slot
 	get_tree().reload_current_scene()
 
 func _show_timeout_flashback() -> void:
