@@ -195,7 +195,7 @@ func _setup_phase_two_purple_barrier(wall_layer: TileMapLayer) -> void:
 var _phase_two_barrier_body: StaticBody2D = null
 var _phase_two_barrier_sprite: Sprite2D = null
 
-func _setup_phase_two_barrier(wall_layer: TileMapLayer) -> void:
+func _setup_phase_two_barrier(wall_layer: TileMapLayer, floor_layer: TileMapLayer) -> void:
 	var is_phase_two := false
 	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
 		is_phase_two = (GameManager.current_phase == 2)
@@ -212,8 +212,8 @@ func _setup_phase_two_barrier(wall_layer: TileMapLayer) -> void:
 	barrier.name = "PhaseTwoTopRightBarrier"
 	barrier.collision_layer = 8 # Layer 4: Map/Obstacles
 	barrier.collision_mask = 0
-	var b_pos := Vector2(14720, -8576) # World pos at tile (57, -34)
-	barrier.global_position = b_pos
+	var b_pos := floor_layer.map_to_local(Vector2i(3, -41)) # World pos at tile (57, -34)
+	barrier.global_position = floor_layer.to_global(b_pos)
 
 	var col := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
@@ -229,6 +229,7 @@ func _setup_phase_two_barrier(wall_layer: TileMapLayer) -> void:
 		spr.texture = load("res://Assets/sprites/props/prop_rubble.png")
 	spr.scale = Vector2(2.4, 2.4)
 	spr.modulate = Color(0.9, 0.35, 0.35, 0.98)
+	spr.position = Vector2(-128.0, 0.0)
 	barrier.add_child(spr)
 
 	var detect_area := Area2D.new()
@@ -406,7 +407,7 @@ func _populate_props() -> void:
 
 	_setup_phase_one_purple_barrier(wall_layer)
 	_setup_phase_two_purple_barrier(wall_layer)
-	_setup_phase_two_barrier(wall_layer)
+	_setup_phase_two_barrier(wall_layer, floor_layer)
 	_spawn_phase_one_sanity_wall_notes(wall_layer)
 	_spawn_phase_two_sanity_wall_notes(wall_layer)
 	_spawn_phase_two_objective_note(root, floor_layer)
