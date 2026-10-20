@@ -21,6 +21,10 @@ func _on_body_entered(body: Node2D) -> void:
 
 		if body.has_method("take_damage"):
 			body.take_damage(damage)
+			
+	if body.is_in_group("boss"):
+		if body.has_method("take_damage"):
+			body.take_damage(damage)
 
 func enable_hitbox() -> void:
 	monitoring = true
