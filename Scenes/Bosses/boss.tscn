@@ -1,9 +1,12 @@
-[gd_scene load_steps=10 format=3 uid="uid://cyp230ojds66h"]
+[gd_scene format=3 uid="uid://cyp230ojds66h"]
 
 [ext_resource type="Script" uid="uid://ba1v6g3kpmhbl" path="res://Scripts/boss.gd" id="1_qtle2"]
-[ext_resource type="Texture2D" uid="uid://qgnl7l737gfj" path="res://Assets/sprites/enemies/boss/1000298991.png" id="2_qsns4"]
-[ext_resource type="Texture2D" uid="uid://uwpsdtiducpp" path="res://Assets/sprites/enemies/boss/1000298990.png" id="3_vre8g"]
-[ext_resource type="Texture2D" uid="uid://bcywagag3higm" path="res://Assets/sprites/enemies/boss/1000298995.png" id="4_5f7pk"]
+[ext_resource type="Texture2D" uid="uid://cv0ok4xrw5wy3" path="res://Assets/sprites/enemies/boss/1000298991.png" id="2_qsns4"]
+[ext_resource type="Texture2D" uid="uid://7trkxvf1300w" path="res://Assets/sprites/enemies/boss/1000298992.png" id="2_vre8g"]
+[ext_resource type="Texture2D" uid="uid://bvffjuqhlflte" path="res://Assets/sprites/enemies/boss/1000298990.png" id="3_vre8g"]
+[ext_resource type="Texture2D" uid="uid://b6b8juhyq668o" path="res://Assets/sprites/enemies/boss/1000298995.png" id="4_5f7pk"]
+[ext_resource type="Texture2D" uid="uid://gol1o6f2men4" path="res://Assets/sprites/enemies/boss/1000298993.png" id="6_5f7pk"]
+[ext_resource type="Texture2D" uid="uid://42mvbeuay6t5" path="res://Assets/sprites/enemies/boss/1000298994.png" id="7_r52o8"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s2dp6"]
 radius = 100.0
@@ -19,57 +22,132 @@ height = 304.0
 
 [sub_resource type="Animation" id="Animation_x38wd"]
 resource_name = "new_animation"
+length = 1.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.35, 0.40999997, 0.55, 1.2, 1.3, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("2_qsns4"), ExtResource("2_vre8g"), ExtResource("6_5f7pk"), ExtResource("7_r52o8"), ExtResource("6_5f7pk"), ExtResource("2_vre8g"), ExtResource("2_qsns4")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.41, 0.55, 1.2, 1.3, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(210.4, 45.6), Vector2(100.4, 13.999998), Vector2(85.200005, 42.4), Vector2(98.399994, 12.400003), Vector2(170.4, 46), Vector2(207.2, 48)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AttackHitbox/CollisionShape2D:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.41, 0.55, 1.2, 1.3, 1.4),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0.0, 0.7853982, 0.83819884, 0.90893036, 0.2617994, -0.057096332]
+}
+
+[sub_resource type="Animation" id="Animation_glmgt"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_vre8g")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(172, 47.2)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AttackHitbox/CollisionShape2D:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.2617994]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_f6kha"]
 _data = {
-&"new_animation": SubResource("Animation_x38wd")
+&"3rd_leg_attack": SubResource("Animation_x38wd"),
+&"RESET": SubResource("Animation_glmgt")
 }
 
-[node name="Boss" type="CharacterBody2D"]
+[node name="Boss" type="CharacterBody2D" unique_id=949733509]
 scale = Vector2(2.5, 2.5)
 script = ExtResource("1_qtle2")
 eye_max_distance = 16.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=346111299]
 position = Vector2(7, -87)
 shape = SubResource("CapsuleShape2D_s2dp6")
 
-[node name="Visuals" type="Node2D" parent="."]
+[node name="Visuals" type="Node2D" parent="." unique_id=1538642348]
 position = Vector2(-16, -50)
 
-[node name="BodySprite" type="Sprite2D" parent="Visuals"]
-texture = ExtResource("2_qsns4")
+[node name="BodySprite" type="Sprite2D" parent="Visuals" unique_id=2111469042]
+texture = ExtResource("2_vre8g")
 
-[node name="HeadSprite" type="Sprite2D" parent="Visuals"]
+[node name="HeadSprite" type="Sprite2D" parent="Visuals" unique_id=1637692108]
 texture = ExtResource("3_vre8g")
 
-[node name="EyeSocket" type="Marker2D" parent="Visuals"]
+[node name="EyeSocket" type="Marker2D" parent="Visuals" unique_id=1653688283]
 position = Vector2(-2, -10)
 
-[node name="EyesSprite" type="Sprite2D" parent="Visuals/EyeSocket"]
+[node name="EyesSprite" type="Sprite2D" parent="Visuals/EyeSocket" unique_id=1088301717]
 texture = ExtResource("4_5f7pk")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." unique_id=1097242044]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox" unique_id=915230693]
 position = Vector2(13, -74)
 shape = SubResource("CapsuleShape2D_yq25j")
 
-[node name="AttackHitbox" type="Area2D" parent="."]
+[node name="AttackHitbox" type="Area2D" parent="." unique_id=469760268]
 collision_layer = 4
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
-position = Vector2(210, 47)
-rotation = 0.261799
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox" unique_id=352716052]
+position = Vector2(172, 47.2)
+rotation = 0.2617994
 shape = SubResource("CapsuleShape2D_nuv35")
 disabled = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_f6kha")
-}
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1174219842]
+libraries/ = SubResource("AnimationLibrary_f6kha")
 
-[node name="AttackTimer" type="Timer" parent="."]
+[node name="AttackTimer" type="Timer" parent="." unique_id=1487876922]
