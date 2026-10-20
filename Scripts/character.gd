@@ -89,6 +89,7 @@ const INVENTORY_SLOT_CENTERS: Array[Vector2] = [Vector2(170, 145), Vector2(170, 
 const INVENTORY_ICON_BOX := Vector2(180, 145)
 
 @export var speed = 450
+var admin_speed = 1800
 @export var accelaration = 35
 
 @export var max_life: int = 3
@@ -143,6 +144,9 @@ var sounds = {
 	}
 }
 
+var admin_mode: bool = false
+@onready var collision_shape: CollisionShape2D = $CollisionShape2D
+
 @onready var point_equipment: Marker2D = $EquipmentPoint
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var audio_player: AudioStreamPlayer2D = $AnimatedSprite2D/AudioStreamPlayer2D
@@ -164,10 +168,20 @@ func _process(delta: float) -> void:
 	if _global_morality_cooldown > 0.0:
 		_global_morality_cooldown = maxf(0.0, _global_morality_cooldown - delta)
 
+var temp_speed = 0
+
 func _physics_process(delta: float) -> void:
 	if is_reading_intro:
 		return
-
+	if Input.is_action_just_pressed("admind_mode"):
+		admin_mode = not admin_mode
+		if admin_mode:
+			temp_speed = speed
+			speed = admin_speed
+		else:
+			speed = temp_speed
+		_toggle_admin_mode(admin_mode)
+		
 	var attack = Input.is_action_just_pressed("attack")
 	
 	if attack and weapon_equiped and not is_dead:
@@ -191,6 +205,18 @@ func _physics_process(delta: float) -> void:
 	else:
 		play_animation(last_direction, "Idle")
 	move_and_slide()
+
+func _toggle_admin_mode(enabled: bool) -> void:
+	if enabled:
+		print("Modo Admin ACTIVADO (Noclip)")
+		# Desactivamos la colisión física para atravesar paredes
+		if collision_shape:
+			collision_shape.disabled = true
+	else:
+		print("Modo Admin DESACTIVADO")
+		# Reactivamos la colisión normal
+		if collision_shape:
+			collision_shape.disabled = false
 
 func play_animation(direction: Vector2, prefix: String):
 	var animation_to_play = ""

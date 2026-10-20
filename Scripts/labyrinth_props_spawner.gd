@@ -52,27 +52,27 @@ const PHASE_ONE_SANITY_WALL_NOTES := [
 const PHASE_TWO_SANITY_WALL_NOTES := [
 	{
 		"id": "p2_wall_note_1",
-		"tile": Vector2i(1, -26),
+		"tile": Vector2i(-2, -32),
 		"text": "The air has changed. It's colder, damp, smelling like stagnant water and rust."
 	},
 	{
 		"id": "p2_wall_note_2",
-		"tile": Vector2i(12, -26),
+		"tile": Vector2i(-14, -38),
 		"text": "I can hear them scuttling along the ceilings. Keep your flashlight raised."
 	},
 	{
 		"id": "p2_wall_note_3",
-		"tile": Vector2i(22, -36),
+		"tile": Vector2i(6, -57),
 		"text": "Every junction feels like a trap. Stay focused on finding the exit."
 	},
 	{
 		"id": "p2_wall_note_4",
-		"tile": Vector2i(32, -43),
+		"tile": Vector2i(27, -55),
 		"text": "Something is blocking the upper passage. There has to be a way to clear it."
 	},
 	{
 		"id": "p2_wall_note_5",
-		"tile": Vector2i(48, -42),
+		"tile": Vector2i(15, -40),
 		"text": "My radio has been dead since the start. No backup. Just my own footsteps."
 	}
 ]
@@ -88,15 +88,15 @@ const PHASE_ONE_EXTRA_ENEMY_POSITIONS: Array[Vector2] = [
 	Vector2(-3328, -6912)   # Upper-west passage before Point 23 (#23)
 ]
 
-const PHASE_TWO_ENEMY_POSITIONS: Array[Vector2] = [
-	Vector2(2432, -6272),   # North pathway (10, -25)
-	Vector2(5248, -8832),   # Dead-end hallway approach (20, -35)
-	Vector2(8576, -9088),   # Central-east hallway (33, -36)
-	Vector2(11392, -9088),  # Further east passage (44, -36)
-	Vector2(11648, -10368), # North-east corridor (45, -41)
-	Vector2(14720, -12672), # Upper corridor (57, -50)
-	Vector2(17280, -10368), # Dead-end alcove (67, -41)
-	Vector2(16512, -13696)  # High north branch (64, -54)
+const PHASE_TWO_ENEMY_POSITIONS: Array[Vector2i] = [
+	Vector2i(-6, -15),   # North pathway (10, -25)
+	Vector2i(1, -18),   # Dead-end hallway approach (20, -35)
+	Vector2i(-2, -29),   # Central-east hallway (33, -36)
+	Vector2i(-17, -39),  # Further east passage (44, -36)
+	Vector2i(-9, -49), # North-east corridor (45, -41)
+	Vector2i(15, -49), # Upper corridor (57, -50)
+	Vector2i(22, -53), # Dead-end alcove (67, -41)
+	Vector2i(13, -38)  # High north branch (64, -54)
 ]
 
 @export var spawn_chance_per_tile: float = 0.28
@@ -157,6 +157,37 @@ func _setup_phase_one_purple_barrier(wall_layer: TileMapLayer) -> void:
 	var col := CollisionShape2D.new()
 	var rect := RectangleShape2D.new()
 	rect.size = Vector2(768.0, 512.0)
+	col.shape = rect
+	barrier.add_child(col)
+	add_child(barrier)
+
+func _setup_phase_two_purple_barrier(wall_layer: TileMapLayer) -> void:
+	var is_phase_two := true
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_phase_two = (GameManager.current_phase == 2)
+
+	if not is_phase_two or not wall_layer:
+		return
+
+	
+	wall_layer.set_cell(Vector2i(18, -41), 0, Vector2i(2, 0))
+	wall_layer.set_cell(Vector2i(18, -40), 0, Vector2i(2, 1))
+	for bx in [-39, -38]:
+		wall_layer.set_cell(Vector2i(18, bx), 0, Vector2i(2, 2))
+	wall_layer.set_cell(Vector2i(18, -37), 0, Vector2i(2, 3))
+	
+
+	# Add an explicit StaticBody2D barrier to guarantee solid collision across the blocked passage
+	var barrier := StaticBody2D.new()
+	barrier.name = "Phase2PurpleWallBarrier"
+	barrier.collision_layer = 8 # Layer 4: Map/Obstacles
+	barrier.collision_mask = 0
+	var b_local := wall_layer.map_to_local(Vector2i(18, -41))
+	barrier.global_position = wall_layer.to_global(b_local) + Vector2(0.0, -256.0)
+
+	var col := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(256.0, 1280.0)
 	col.shape = rect
 	barrier.add_child(col)
 	add_child(barrier)
@@ -297,7 +328,7 @@ func _spawn_phase_two_sanity_wall_notes(wall_layer: TileMapLayer) -> void:
 		add_child(note_node)
 		_spawned_wall_notes.append(note_node)
 
-func _spawn_phase_two_objective_note(root: Node) -> void:
+func _spawn_phase_two_objective_note(root: Node, floor_layer: TileMapLayer) -> void:
 	var is_phase_two := false
 	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
 		is_phase_two = (GameManager.current_phase == 2)
@@ -312,10 +343,11 @@ func _spawn_phase_two_objective_note(root: Node) -> void:
 	if note_scene:
 		var note_inst := note_scene.instantiate() as Area2D
 		note_inst.name = "PhaseTwoObjectiveNote"
-		note_inst.global_position = Vector2(5248, -8832)
+		var local_pos = floor_layer.map_to_local(Vector2i(28, -52))
+		note_inst.global_position = floor_layer.to_global(local_pos)
 		root.add_child(note_inst)
 
-func _spawn_enemies(root: Node) -> void:
+func _spawn_enemies(root: Node, tile_map_layer: TileMapLayer) -> void:
 	if not root:
 		return
 	var phase := 1
@@ -338,18 +370,21 @@ func _spawn_enemies(root: Node) -> void:
 		# In phase 2, clean up initial phase 1 flashback note
 		if flashback_note:
 			flashback_note.queue_free()
-
+		
+		var local_pos
 		# Ensure template enemies are at phase 2 positions
 		if template_enemy:
-			template_enemy.global_position = Vector2(2432, -6272)
+			local_pos = tile_map_layer.map_to_local(Vector2i(-8, -12))
+			template_enemy.global_position = tile_map_layer.to_global(local_pos)
 		if second_enemy:
 			second_enemy.global_position = Vector2(8576, -9088)
 
 		if template_enemy:
-			for i in range(2, PHASE_TWO_ENEMY_POSITIONS.size()):
+			for i in range(0, PHASE_TWO_ENEMY_POSITIONS.size()):
 				var enemy_inst := template_enemy.duplicate() as CharacterBody2D
 				if enemy_inst:
-					enemy_inst.global_position = PHASE_TWO_ENEMY_POSITIONS[i]
+					local_pos = tile_map_layer.map_to_local(PHASE_TWO_ENEMY_POSITIONS[i])
+					enemy_inst.global_position = tile_map_layer.to_global(local_pos)
 					root.add_child(enemy_inst)
 	else:
 		if template_enemy:
@@ -370,11 +405,12 @@ func _populate_props() -> void:
 		return
 
 	_setup_phase_one_purple_barrier(wall_layer)
+	_setup_phase_two_purple_barrier(wall_layer)
 	_setup_phase_two_barrier(wall_layer)
 	_spawn_phase_one_sanity_wall_notes(wall_layer)
 	_spawn_phase_two_sanity_wall_notes(wall_layer)
-	_spawn_phase_two_objective_note(root)
-	_spawn_enemies(root)
+	_spawn_phase_two_objective_note(root, floor_layer)
+	_spawn_enemies(root, floor_layer)
 
 	var loaded_floor_textures: Array[Texture2D] = []
 	for path in FLOOR_PROP_TEXTURES:
