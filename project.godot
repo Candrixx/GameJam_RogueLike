@@ -16,8 +16,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Who pulls the trigger"
 run/main_scene="uid://delwwmwfbjixu"
-config/features=PackedStringArray("4.4", "GL Compatibility")
-config/icon="uid://drg4lkpwyxslq"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+config/icon="uid://b6h3cldvgt2eq"
 
 [autoload]
 
