@@ -4,9 +4,9 @@
 [ext_resource type="Texture2D" uid="uid://qgnl7l737gfj" path="res://Assets/sprites/enemies/boss/1000298991.png" id="2_qsns4"]
 [ext_resource type="Texture2D" uid="uid://uwpsdtiducpp" path="res://Assets/sprites/enemies/boss/1000298990.png" id="3_vre8g"]
 [ext_resource type="Texture2D" uid="uid://bcywagag3higm" path="res://Assets/sprites/enemies/boss/1000298995.png" id="4_5f7pk"]
-[ext_resource type="Texture2D" uid="uid://7trkxvf1300w" path="res://Assets/sprites/enemies/boss/1000298992.png" id="5_f2992"]
-[ext_resource type="Texture2D" uid="uid://gol1o6f2men4" path="res://Assets/sprites/enemies/boss/1000298993.png" id="6_f2993"]
-[ext_resource type="Texture2D" uid="uid://42mvbeuay6t5" path="res://Assets/sprites/enemies/boss/1000298994.png" id="7_f2994"]
+[ext_resource type="Texture2D" uid="uid://bj15frlx508na" path="res://Assets/sprites/enemies/boss/1000298992.png" id="5_f2992"]
+[ext_resource type="Texture2D" uid="uid://bxbngjb4si038" path="res://Assets/sprites/enemies/boss/1000298993.png" id="6_f2993"]
+[ext_resource type="Texture2D" uid="uid://dl187h5wr87qa" path="res://Assets/sprites/enemies/boss/1000298994.png" id="7_f2994"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s2dp6"]
 radius = 58.0
@@ -19,35 +19,6 @@ height = 170.0
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nuv35"]
 radius = 65.0
 height = 280.0
-
-[sub_resource type="Animation" id="Animation_idle"]
-resource_name = "idle"
-length = 1.2
-loop_mode = 1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Visuals/BodySprite:texture")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [ExtResource("2_qsns4")]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:disabled")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
-}
 
 [sub_resource type="Animation" id="Animation_manotazo"]
 resource_name = "3rd_leg_attack"
@@ -105,6 +76,35 @@ tracks/1/keys = {
 "values": [true, false, true, false, true]
 }
 
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 1.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_qsns4")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_f6kha"]
 _data = {
 &"3rd_leg_attack": SubResource("Animation_manotazo"),
@@ -117,9 +117,6 @@ scale = Vector2(2.5, 2.5)
 collision_layer = 4
 collision_mask = 9
 script = ExtResource("1_qtle2")
-max_health = 280
-damage = 1
-eye_max_distance = 16.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -45)

@@ -226,7 +226,6 @@ collision_mask = 15
 script = ExtResource("7_n257l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="grunt"]
-position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_odp46")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="grunt"]
@@ -241,7 +240,6 @@ collision_mask = 15
 script = ExtResource("7_n257l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="grunt_2"]
-position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_odp46")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="grunt_2"]
@@ -269,7 +267,7 @@ Ataca a las sombras usando \"K\" o click izq"
 position = Vector2(479, 304)
 shape = SubResource("RectangleShape2D_ty0te")
 
-[node name="Boss" parent="." groups=["boss"] instance=ExtResource("12_o8hr2")]
+[node name="Boss" parent="." instance=ExtResource("12_o8hr2")]
 position = Vector2(954, -12882)
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
