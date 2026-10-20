@@ -157,7 +157,7 @@ physics_layer_0/collision_mask = 5
 sources/0 = SubResource("TileSetAtlasSource_hmat7")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_odp46"]
-size = Vector2(163, 305)
+size = Vector2(85, 110)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_pbbxr"]
 animations = [{
@@ -226,7 +226,7 @@ collision_mask = 15
 script = ExtResource("7_n257l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="grunt"]
-position = Vector2(7.5, 113.5)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_odp46")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="grunt"]
@@ -241,7 +241,7 @@ collision_mask = 15
 script = ExtResource("7_n257l")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="grunt_2"]
-position = Vector2(7.5, 113.5)
+position = Vector2(0, 0)
 shape = SubResource("RectangleShape2D_odp46")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="grunt_2"]
@@ -250,7 +250,7 @@ sprite_frames = SubResource("SpriteFrames_pbbxr")
 animation = &"walk_down"
 
 [node name="baton_floor" parent="." instance=ExtResource("9_6pn7r")]
-position = Vector2(1458, 462)
+position = Vector2(-384, -3712)
 
 [node name="Note" parent="." instance=ExtResource("11_n257l")]
 position = Vector2(-3840, -6400)
@@ -273,7 +273,6 @@ shape = SubResource("RectangleShape2D_ty0te")
 position = Vector2(954, -12882)
 
 [node name="CanvasModulate" type="CanvasModulate" parent="."]
-visible = false
-color = Color(0.233925, 0.233925, 0.233925, 1)
+color = Color(0.11, 0.11, 0.13, 1)
 
 [connection signal="body_entered" from="GatilloDialogo" to="GatilloDialogo" method="_on_body_entered"]

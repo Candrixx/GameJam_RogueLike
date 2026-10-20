@@ -11,7 +11,94 @@ var saved_inventory = null
 var saved_selected_slot: int = 0
 var collected_item_ids: Array = []
 
+const MUSIC_TENSA_CALMA := "res://Assets/Music/Tensa Calma.mp3"
+const MUSIC_PELIGRO_3 := "res://Assets/Music/Peligro 3.mp3"
+const MUSIC_PELIGRO := "res://Assets/Music/Peligro.mp3"
+const MUSIC_CAMINO_BUENO := "res://Assets/Music/Camino Bueno.mp3"
+
 var phase_two_note_found: bool = false
+var open_credits_on_menu: bool = false
+var _current_music_path: String = ""
+
+func _ready() -> void:
+	ensure_labyrinth_echo_bus()
+	play_music(MUSIC_TENSA_CALMA)
+
+func play_music(track_path: String, force_restart: bool = false) -> void:
+	if not ResourceLoader.exists(track_path):
+		return
+	var bg_node := get_node_or_null("/root/BgMusic")
+	if not bg_node:
+		return
+	bg_node.process_mode = Node.PROCESS_MODE_ALWAYS
+	if not force_restart and _current_music_path == track_path and bg_node.get("playing") == true:
+		return
+	var stream := load(track_path) as AudioStream
+	if not stream:
+		return
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	_current_music_path = track_path
+	bg_node.set("volume_db", -2.5 if track_path == MUSIC_PELIGRO else 0.0)
+	bg_node.set("stream", stream)
+	bg_node.call("play")
+
+func ensure_labyrinth_echo_bus() -> StringName:
+	var bus_name := &"LabyrinthEcho"
+	var idx := AudioServer.get_bus_index(bus_name)
+	if idx == -1:
+		AudioServer.add_bus()
+		idx = AudioServer.bus_count - 1
+		AudioServer.set_bus_name(idx, bus_name)
+		AudioServer.set_bus_send(idx, &"Master")
+
+		# 1. Noise removal stage (cuts low-frequency mic hum/rumble and high-frequency hiss/static while keeping full mid-range voice presence)
+		var hpf := AudioEffectHighPassFilter.new()
+		hpf.cutoff_hz = 85.0
+		hpf.resonance = 0.5
+		hpf.db = AudioEffectFilter.FILTER_12DB
+		AudioServer.add_bus_effect(idx, hpf)
+
+		var lpf := AudioEffectLowPassFilter.new()
+		lpf.cutoff_hz = 4800.0
+		lpf.resonance = 0.5
+		lpf.db = AudioEffectFilter.FILTER_12DB
+		AudioServer.add_bus_effect(idx, lpf)
+
+		var eq := AudioEffectEQ10.new()
+		eq.set_band_gain_db(0, -24.0) # 31 Hz hum
+		eq.set_band_gain_db(1, -14.0) # 62 Hz hum
+		eq.set_band_gain_db(4, 2.5)   # 500 Hz body boost
+		eq.set_band_gain_db(5, 3.0)   # 1000 Hz presence boost
+		eq.set_band_gain_db(6, 2.5)   # 2000 Hz clarity boost
+		eq.set_band_gain_db(8, -16.0) # 8000 Hz hiss
+		eq.set_band_gain_db(9, -24.0) # 16000 Hz static
+		AudioServer.add_bus_effect(idx, eq)
+
+		# 2. Labyrinth Echo stage (Delay + Reverb)
+		var delay_fx := AudioEffectDelay.new()
+		delay_fx.tap1_active = true
+		delay_fx.tap1_delay_ms = 215.0
+		delay_fx.tap1_level_db = -8.5
+		delay_fx.tap1_pan = -0.25
+		delay_fx.tap2_active = true
+		delay_fx.tap2_delay_ms = 430.0
+		delay_fx.tap2_level_db = -13.5
+		delay_fx.tap2_pan = 0.25
+		delay_fx.feedback_active = true
+		delay_fx.feedback_delay_ms = 240.0
+		delay_fx.feedback_level_db = -11.5
+		delay_fx.feedback_lowpass = 2800.0
+		AudioServer.add_bus_effect(idx, delay_fx)
+
+		var reverb_fx := AudioEffectReverb.new()
+		reverb_fx.room_size = 0.72
+		reverb_fx.damping = 0.52
+		reverb_fx.spread = 0.85
+		reverb_fx.wet = 0.28
+		reverb_fx.dry = 0.90
+		AudioServer.add_bus_effect(idx, reverb_fx)
+	return bus_name
 
 func add_kill() -> void:
 	kill_count += 1
@@ -40,14 +127,26 @@ func advance_to_phase_two() -> void:
 	phase_two_note_found = false
 	print("Advanced to Phase 2 | Route: ", get_route_name(), " | Kills: ", kill_count)
 
+func advance_to_phase_three() -> void:
+	current_phase = 3
+	cicle = maxi(cicle + 1, 2)
+	phase_two_note_found = true
+	print("Advanced to Phase 3 (Boss Room) | Route: ", get_route_name(), " | Kills: ", kill_count)
+
+func reset_to_phase_one() -> void:
+	current_phase = 1
+	cicle = 0
+	kill_count = 0
+	is_genocide_route = false
+	collected_wall_notes.clear()
+	collected_item_ids.clear()
+	saved_inventory = null
+	saved_selected_slot = 0
+	phase_two_note_found = false
+	print("Reset to Phase 1 from 0")
+
 func reset_kills() -> void:
-	if current_phase == 1:
-		kill_count = 0
-		is_genocide_route = false
-		collected_wall_notes.clear()
-	elif current_phase == 2:
-		# If restarting phase 2 on death, reset phase 2 note if needed
-		pass
+	reset_to_phase_one()
 
 func next_cicle() -> void:
 	var root = get_tree().current_scene

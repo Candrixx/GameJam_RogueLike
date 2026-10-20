@@ -30,6 +30,7 @@ var _warning_panel: PanelContainer
 var _warning_label: Label
 var _warning_sub_label: Label
 var _warning_tween: Tween = null
+var _watch_hint_label: Label = null
 var _warned_180: bool = false
 var _warned_120: bool = false
 var _warned_60: bool = false
@@ -53,11 +54,14 @@ func _ready() -> void:
 	_setup_watch_audio()
 	_build_ui()
 	_build_warning_banner()
+	_build_watch_hint()
 	_root_control.visible = false
 	_root_control.modulate.a = 0.0
 
 func start_countdown() -> void:
 	countdown_started = true
+	if _watch_hint_label:
+		_watch_hint_label.visible = not is_open
 
 func trigger_rapid_drain_to_zero() -> void:
 	if _timeout_triggered:
@@ -75,12 +79,18 @@ func trigger_rapid_drain_to_zero() -> void:
 	_show_time_warning("TIME IS COLLAPSING!", "00:00 Approaches...", true)
 
 func _setup_watch_audio() -> void:
+	var echo_bus := &"Master"
+	if get_node_or_null("/root/GameManager") and GameManager.has_method("ensure_labyrinth_echo_bus"):
+		echo_bus = GameManager.ensure_labyrinth_echo_bus()
+
 	_tick_player = AudioStreamPlayer.new()
 	_tick_player.volume_db = -6.0
+	_tick_player.bus = echo_bus
 	add_child(_tick_player)
 
 	_chime_player = AudioStreamPlayer.new()
 	_chime_player.volume_db = -4.0
+	_chime_player.bus = echo_bus
 	add_child(_chime_player)
 
 	_sfx_tick = _generate_watch_tick_wav(2550.0, 0.032, 0.55)
@@ -295,6 +305,24 @@ func _build_warning_banner() -> void:
 	_warning_sub_label.add_theme_color_override("font_color", Color(0.68, 0.64, 0.58, 0.90))
 	vbox.add_child(_warning_sub_label)
 
+func _build_watch_hint() -> void:
+	_watch_hint_label = Label.new()
+	_watch_hint_label.name = "WatchKeyHintLabel"
+	_watch_hint_label.text = "[R] Check watch"
+	_watch_hint_label.position = Vector2(28.0, 22.0)
+	_watch_hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_watch_hint_label.visible = false
+	if _custom_font:
+		_watch_hint_label.add_theme_font_override("font", _custom_font)
+	_watch_hint_label.add_theme_font_size_override("font_size", 22)
+	_watch_hint_label.add_theme_color_override("font_color", Color(0.86, 0.84, 0.78, 0.90))
+	_watch_hint_label.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.03, 1.0))
+	_watch_hint_label.add_theme_constant_override("outline_size", 6)
+	_watch_hint_label.add_theme_color_override("font_shadow_color", Color(0.0, 0.0, 0.0, 0.92))
+	_watch_hint_label.add_theme_constant_override("shadow_offset_x", 2)
+	_watch_hint_label.add_theme_constant_override("shadow_offset_y", 2)
+	add_child(_watch_hint_label)
+
 func _show_time_warning(main_text: String, sub_text: String, is_urgent: bool = false) -> void:
 	if not _warning_panel:
 		return
@@ -334,6 +362,8 @@ func toggle_watch() -> void:
 		return
 	is_open = not is_open
 	_play_tick(true)
+	if _watch_hint_label:
+		_watch_hint_label.visible = countdown_started and not is_open
 
 	if _fade_tween and _fade_tween.is_valid():
 		_fade_tween.kill()
@@ -361,6 +391,8 @@ func force_close() -> void:
 		_root_control.visible = false
 	if _warning_panel:
 		_warning_panel.visible = false
+	if _watch_hint_label:
+		_watch_hint_label.visible = false
 
 func _process(delta: float) -> void:
 	if character and (character.get("is_reading_intro") or character.get("is_dead")):

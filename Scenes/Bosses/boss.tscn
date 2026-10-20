@@ -1,37 +1,128 @@
-[gd_scene load_steps=10 format=3 uid="uid://cyp230ojds66h"]
+[gd_scene load_steps=15 format=3 uid="uid://cyp230ojds66h"]
 
 [ext_resource type="Script" uid="uid://ba1v6g3kpmhbl" path="res://Scripts/boss.gd" id="1_qtle2"]
 [ext_resource type="Texture2D" uid="uid://qgnl7l737gfj" path="res://Assets/sprites/enemies/boss/1000298991.png" id="2_qsns4"]
 [ext_resource type="Texture2D" uid="uid://uwpsdtiducpp" path="res://Assets/sprites/enemies/boss/1000298990.png" id="3_vre8g"]
 [ext_resource type="Texture2D" uid="uid://bcywagag3higm" path="res://Assets/sprites/enemies/boss/1000298995.png" id="4_5f7pk"]
+[ext_resource type="Texture2D" uid="uid://7trkxvf1300w" path="res://Assets/sprites/enemies/boss/1000298992.png" id="5_f2992"]
+[ext_resource type="Texture2D" uid="uid://gol1o6f2men4" path="res://Assets/sprites/enemies/boss/1000298993.png" id="6_f2993"]
+[ext_resource type="Texture2D" uid="uid://42mvbeuay6t5" path="res://Assets/sprites/enemies/boss/1000298994.png" id="7_f2994"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_s2dp6"]
-radius = 100.0
-height = 200.0
+radius = 58.0
+height = 130.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yq25j"]
-radius = 78.0
-height = 156.0
+radius = 82.0
+height = 170.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_nuv35"]
-radius = 35.0
-height = 304.0
+radius = 65.0
+height = 280.0
 
-[sub_resource type="Animation" id="Animation_x38wd"]
-resource_name = "new_animation"
+[sub_resource type="Animation" id="Animation_idle"]
+resource_name = "idle"
+length = 1.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [ExtResource("2_qsns4")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_manotazo"]
+resource_name = "3rd_leg_attack"
+length = 0.85
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.14, 0.3, 0.46, 0.74),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("2_qsns4"), ExtResource("5_f2992"), ExtResource("6_f2993"), ExtResource("7_f2994"), ExtResource("2_qsns4")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.44, 0.72),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [true, false, true]
+}
+
+[sub_resource type="Animation" id="Animation_double_manotazo"]
+resource_name = "double_manotazo"
+length = 1.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/BodySprite:texture")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.12, 0.24, 0.36, 0.56, 0.68, 0.8, 0.92, 1.14),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [ExtResource("2_qsns4"), ExtResource("5_f2992"), ExtResource("6_f2993"), ExtResource("7_f2994"), ExtResource("2_qsns4"), ExtResource("5_f2992"), ExtResource("6_f2993"), ExtResource("7_f2994"), ExtResource("2_qsns4")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AttackHitbox/CollisionShape2D:disabled")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.35, 0.54, 0.9, 1.12),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [true, false, true, false, true]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_f6kha"]
 _data = {
-&"new_animation": SubResource("Animation_x38wd")
+&"3rd_leg_attack": SubResource("Animation_manotazo"),
+&"double_manotazo": SubResource("Animation_double_manotazo"),
+&"idle": SubResource("Animation_idle")
 }
 
-[node name="Boss" type="CharacterBody2D"]
+[node name="Boss" type="CharacterBody2D" groups=["boss"]]
 scale = Vector2(2.5, 2.5)
+collision_layer = 4
+collision_mask = 9
 script = ExtResource("1_qtle2")
+max_health = 280
+damage = 1
 eye_max_distance = 16.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(7, -87)
+position = Vector2(0, -45)
 shape = SubResource("CapsuleShape2D_s2dp6")
 
 [node name="Visuals" type="Node2D" parent="."]
@@ -49,20 +140,20 @@ position = Vector2(-2, -10)
 [node name="EyesSprite" type="Sprite2D" parent="Visuals/EyeSocket"]
 texture = ExtResource("4_5f7pk")
 
-[node name="Hurtbox" type="Area2D" parent="."]
+[node name="Hurtbox" type="Area2D" parent="." groups=["boss"]]
 collision_layer = 4
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Hurtbox"]
-position = Vector2(13, -74)
+position = Vector2(0, -55)
 shape = SubResource("CapsuleShape2D_yq25j")
 
 [node name="AttackHitbox" type="Area2D" parent="."]
 collision_layer = 4
-collision_mask = 2
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
-position = Vector2(210, 47)
+position = Vector2(120, 20)
 rotation = 0.261799
 shape = SubResource("CapsuleShape2D_nuv35")
 disabled = true

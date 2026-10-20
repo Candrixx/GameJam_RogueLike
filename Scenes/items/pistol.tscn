@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" uid="uid://c0dvexjna243s" path="res://Scenes/items/base_item.tscn" id="1_base"]
+[ext_resource type="Texture2D" uid="uid://bsao18dgl8lvu" path="res://Assets/sprites/objects/pistola.png" id="2_pistol_tex"]
+
+[node name="pistol" instance=ExtResource("1_base")]
+weapon_name = "Pistol"
+damage = 35
+knockback_force = 450.0
+
+[node name="GunSprite" type="Sprite2D" parent="." index="1"]
+visible = false
+position = Vector2(0, 2.2)
+rotation = 1.5708
+scale = Vector2(0.011, 0.011)
+texture = ExtResource("2_pistol_tex")

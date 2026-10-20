@@ -53,11 +53,13 @@ var _base_sprite_pos: Vector2 = Vector2.ZERO
 var _walk_anim_time: float = 0.0
 var _morality_thought_cooldown: float = 0.0
 
-# Insect skittering / crawling footstep audio for moving enemies
+# Enemy audio: Phase 1 hollow exhale & Phase 2 insect walking skitter
 var _crawler_audio_player: AudioStreamPlayer2D = null
 var _skitter_sound: AudioStreamWAV = null
+var _exhale_sound: AudioStreamWAV = null
 var _step_interval: float = 0.16
 var _step_timer: float = 0.0
+var _exhale_timer: float = 1.2
 
 func _ready() -> void:
 	_patrol_origin = global_position
@@ -74,35 +76,89 @@ func _ready() -> void:
 		_setup_phase_frames()
 		_update_enemy_sprite()
 
+	var col_shape := find_child("*CollisionShape2D*", true, false) as CollisionShape2D
+	if col_shape:
+		col_shape.position = Vector2.ZERO
+		if col_shape.shape is RectangleShape2D:
+			var rect := (col_shape.shape as RectangleShape2D).duplicate() as RectangleShape2D
+			rect.size = Vector2(85.0, 110.0)
+			col_shape.shape = rect
+
 	add_to_group("enemy")
 
 func _setup_crawler_audio() -> void:
 	_crawler_audio_player = AudioStreamPlayer2D.new()
-	_crawler_audio_player.max_distance = 850.0
-	_crawler_audio_player.attenuation = 1.35
-	_crawler_audio_player.volume_db = -8.0
+	_crawler_audio_player.max_distance = 1150.0
+	_crawler_audio_player.attenuation = 1.25
+	_crawler_audio_player.volume_db = -4.5
+	if get_node_or_null("/root/GameManager") and GameManager.has_method("ensure_labyrinth_echo_bus"):
+		_crawler_audio_player.bus = GameManager.ensure_labyrinth_echo_bus()
 	add_child(_crawler_audio_player)
 	_skitter_sound = _generate_insect_skitter_wav()
+	_exhale_sound = _generate_shadow_exhale_wav()
+	_exhale_timer = randf_range(0.6, 2.8)
 
-func _generate_insect_skitter_wav() -> AudioStreamWAV:
-	# Generates an organic insect / spider leg skitter click with quick high-frequency chitin scuttle
+func _generate_shadow_exhale_wav() -> AudioStreamWAV:
+	# Synthesizes a clean, noise-free hollow shadow exhale / deep breath for Phase 1 enemies
 	var wav := AudioStreamWAV.new()
 	wav.format = AudioStreamWAV.FORMAT_16_BITS
 	var mix_rate := 22050
 	wav.mix_rate = mix_rate
 	wav.stereo = false
-	var duration := 0.042
+	var duration := 1.15
 	var total_samples := int(duration * mix_rate)
 	var bytes := PackedByteArray()
 	bytes.resize(total_samples * 2)
 
-	var f1 := 2400.0
-	var f2 := 3600.0
+	var lp1 := 0.0
+	var lp2 := 0.0
+	var lp3 := 0.0
 	for i in range(total_samples):
 		var t := float(i) / float(mix_rate)
-		var env := exp(-t * 90.0)
-		var sample_f := (sin(TAU * f1 * t) * 0.5 + sin(TAU * f2 * t) * 0.35 + (randf() * 2.0 - 1.0) * 0.25) * env
-		var s_val := int(clampf(sample_f, -1.0, 1.0) * 24000.0)
+		var env := 0.0
+		if t < 0.24:
+			env = sin((t / 0.24) * PI * 0.5)
+		else:
+			env = exp(-(t - 0.24) * 3.2)
+
+		var raw := randf() * 2.0 - 1.0
+		# Cascade 3-pole lowpass filter to completely eliminate harsh high-frequency white noise hiss
+		var alpha := 0.048 - 0.016 * (t / duration)
+		lp1 += alpha * (raw - lp1)
+		lp2 += alpha * (lp1 - lp2)
+		lp3 += alpha * (lp2 - lp3)
+		var f0 := 112.0 - 24.0 * (t / duration)
+		var vocal_cord := (sin(TAU * f0 * t) * 0.35 + sin(TAU * (f0 * 1.98) * t) * 0.18) * (0.6 + lp3 * 1.8)
+		var sample_f := (lp3 * 2.2 + vocal_cord) * env
+		var s_val := int(clampf(sample_f, -1.0, 1.0) * 21000.0)
+		bytes.encode_s16(i * 2, s_val)
+
+	wav.data = bytes
+	return wav
+
+func _generate_insect_skitter_wav() -> AudioStreamWAV:
+	# Generates a clean, static-free multi-legged insect walking scurry (3 rapid chitinous leg clicks)
+	var wav := AudioStreamWAV.new()
+	wav.format = AudioStreamWAV.FORMAT_16_BITS
+	var mix_rate := 22050
+	wav.mix_rate = mix_rate
+	wav.stereo = false
+	var duration := 0.088
+	var total_samples := int(duration * mix_rate)
+	var bytes := PackedByteArray()
+	bytes.resize(total_samples * 2)
+
+	for i in range(total_samples):
+		var t := float(i) / float(mix_rate)
+		# Three staggered insect leg taps at t=0.0, t=0.027, t=0.054 (pure resonant wood/chitin clicks, zero white-noise static)
+		var t1 := t
+		var t2 := maxf(0.0, t - 0.027)
+		var t3 := maxf(0.0, t - 0.054)
+		var tap1 := exp(-t1 * 175.0) * sin(TAU * (1850.0 * exp(-t1 * 35.0)) * t1)
+		var tap2 := (exp(-t2 * 185.0) * sin(TAU * (2320.0 * exp(-t2 * 35.0)) * t2) * 0.82) if t >= 0.027 else 0.0
+		var tap3 := (exp(-t3 * 195.0) * sin(TAU * (2080.0 * exp(-t3 * 35.0)) * t3) * 0.70) if t >= 0.054 else 0.0
+		var sample_f := tap1 + tap2 + tap3
+		var s_val := int(clampf(sample_f, -1.0, 1.0) * 23000.0)
 		bytes.encode_s16(i * 2, s_val)
 
 	wav.data = bytes
@@ -214,6 +270,21 @@ func _physics_process(delta: float) -> void:
 func _animate_walk_motion(delta: float) -> void:
 	if not animated_sprite:
 		return
+	var is_p2 := false
+	if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
+		is_p2 = (GameManager.current_phase == 2)
+
+	# Phase 1 common enemies: periodic hollow exhaling sound when near the player
+	if not is_p2:
+		_exhale_timer -= delta
+		if _exhale_timer <= 0.0:
+			_exhale_timer = randf_range(2.6, 4.3)
+			if _crawler_audio_player and _exhale_sound and _player and global_position.distance_to(_player.global_position) <= 1050.0:
+				_crawler_audio_player.volume_db = -5.5
+				_crawler_audio_player.pitch_scale = randf_range(0.84, 1.08)
+				_crawler_audio_player.stream = _exhale_sound
+				_crawler_audio_player.play()
+
 	var spd := velocity.length()
 	if spd > 10.0:
 		var freq := clampf(spd / 26.0, 4.5, 9.5)
@@ -223,15 +294,13 @@ func _animate_walk_motion(delta: float) -> void:
 		animated_sprite.position = _base_sprite_pos + Vector2(0.0, bob_y)
 		animated_sprite.rotation = sway_rot
 
-		# Insect / crawler skitter sound effect playback in Phase 2
-		var is_p2 := false
-		if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
-			is_p2 = (GameManager.current_phase == 2)
+		# Phase 2 common enemies: multi-legged insect walking sound effect
 		if is_p2:
 			_step_timer -= delta
 			if _step_timer <= 0.0 and _crawler_audio_player and _skitter_sound:
-				_step_timer = randf_range(0.12, 0.18)
-				_crawler_audio_player.pitch_scale = randf_range(0.85, 1.25)
+				_step_timer = randf_range(0.11, 0.17)
+				_crawler_audio_player.volume_db = -4.0
+				_crawler_audio_player.pitch_scale = randf_range(0.88, 1.22)
 				_crawler_audio_player.stream = _skitter_sound
 				_crawler_audio_player.play()
 	else:
@@ -395,13 +464,18 @@ func die() -> void:
 	velocity = Vector2.ZERO
 	knockback_velocity = Vector2.ZERO
 
-	GameManager.add_kill()
+	var p := get_tree().get_first_node_in_group(player_group)
+	if p and p.has_method("add_kill"):
+		p.add_kill()
+	elif get_node_or_null("/root/GameManager") and GameManager.has_method("add_kill"):
+		GameManager.add_kill()
 
 	var collider = find_child("*CollisionShape2D*", true, false) as CollisionShape2D
 	if collider:
 		collider.set_deferred("disabled", true)
 
 	if animated_sprite:
+		await get_tree().create_timer(0.15).timeout
 		var tween = create_tween().set_parallel(true)
 		tween.tween_property(animated_sprite, "modulate:a", 0.0, 0.35)
 

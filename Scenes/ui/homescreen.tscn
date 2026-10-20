@@ -13,6 +13,17 @@
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_w4mfu"]
 texture = ExtResource("3_no0mw")
 
+[sub_resource type="Gradient" id="Gradient_credits_bg"]
+offsets = PackedFloat32Array(0, 0.45, 1)
+colors = PackedColorArray(0, 0, 0, 0, 0, 0, 0, 0.78, 0, 0, 0, 0.98)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_credits_bg"]
+gradient = SubResource("Gradient_credits_bg")
+width = 512
+height = 64
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(1, 0.5)
+
 [node name="Control" type="Control" unique_id=1295051161]
 layout_mode = 3
 anchors_preset = 15
@@ -99,6 +110,19 @@ grow_vertical = 2
 texture = ExtResource("1_q1tuw")
 expand_mode = 1
 
+[node name="DegradadoCreditos" type="TextureRect" parent="PanelCreditos"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.30
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_credits_bg")
+expand_mode = 1
+
 [node name="creditos" type="RichTextLabel" parent="PanelCreditos" unique_id=612994142]
 layout_mode = 1
 anchors_preset = -1
@@ -111,7 +135,7 @@ offset_top = -52.264
 offset_right = -82.87207
 offset_bottom = -179.992
 theme_override_font_sizes/normal_font_size = 33
-text = "Artistas
+text = "Artists
 
 	Chris Ferreira \"chrisit0\"
 	Avril Paredes \"Avrillll\"
@@ -120,17 +144,17 @@ text = "Artistas
 	Vanesa Martínez \"Vanesamb\"
 	Mariangel Gonzalez \"MAOGUI\"
 
-Programadores
+Programmers
 	Carlos Heydra \"Artificial_wiimote\"
 	Diego De Leon \"Daigo\"
 	Ricardo Angulo \"Uraviry\"
 	Carlos Arena \"Candrixx\"
 	Diego Monsalve \"Sparatrox\"
 
-Guionista
+Writer
 	kamilah \"kamilah\"
 
-Música y Sonido
+Music & Sound
 	Francisco Guevara \"Allrisk\""
 
 [node name="Volver" type="Button" parent="PanelCreditos" unique_id=1593249179]
@@ -144,9 +168,10 @@ offset_left = 0.47991943
 offset_top = -0.15203857
 offset_right = 6.36792
 offset_bottom = 0.20794678
+theme_override_font_sizes/font_size = 48
 theme_override_styles/normal = SubResource("StyleBoxTexture_ty0te")
 theme_override_styles/hover = SubResource("StyleBoxTexture_w4mfu")
-icon = ExtResource("6_0us5w")
+text = "Back"
 
 [node name="CortinaTrnas" type="ColorRect" parent="." unique_id=2105946118]
 layout_mode = 1

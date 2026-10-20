@@ -7,6 +7,7 @@ var _prompt_label: Label = null
 
 func _ready() -> void:
 	note_ui.visible = false
+	_setup_note_glow()
 	_prompt_label = Label.new()
 	_prompt_label.text = "[E] Read"
 	_prompt_label.custom_minimum_size = Vector2(360, 60)
@@ -30,6 +31,95 @@ func _ready() -> void:
 	_prompt_label.add_theme_constant_override("shadow_offset_y", 4)
 	add_child(_prompt_label)
 
+func _setup_note_glow() -> void:
+	var glow_tex := _create_sparkle_glow_texture(128)
+
+	# PointLight2D so the flashback note casts a warm noticeable halo around itself on the floor
+	var pt_light := PointLight2D.new()
+	pt_light.name = "NoteGlowLight"
+	pt_light.texture = glow_tex
+	pt_light.texture_scale = 2.4
+	pt_light.color = Color(1.0, 0.94, 0.76, 1.0)
+	pt_light.energy = 1.05
+	add_child(pt_light)
+
+	var mat := CanvasItemMaterial.new()
+	mat.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
+	mat.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+
+	var aura := Sprite2D.new()
+	aura.name = "GlowAura"
+	aura.texture = glow_tex
+	aura.material = mat
+	aura.modulate = Color(1.0, 0.93, 0.68, 0.80)
+	aura.scale = Vector2(1.55, 1.55)
+	aura.z_index = -1
+	add_child(aura)
+
+	var star_tex := _create_star_glint_texture(96)
+	var glint := Sprite2D.new()
+	glint.name = "GlowGlint"
+	glint.texture = star_tex
+	glint.material = mat
+	glint.modulate = Color(1.0, 0.98, 0.85, 0.90)
+	glint.scale = Vector2(1.25, 1.25)
+	glint.z_index = 1
+	add_child(glint)
+
+	var note_spr := get_node_or_null("Sprite2D") as Sprite2D
+	if note_spr:
+		var spr_mat := CanvasItemMaterial.new()
+		spr_mat.light_mode = CanvasItemMaterial.LIGHT_MODE_UNSHADED
+		note_spr.material = spr_mat
+
+	var tw := create_tween().set_loops()
+	tw.set_parallel(true)
+	tw.tween_property(aura, "scale", Vector2(1.95, 1.95), 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(aura, "modulate:a", 1.0, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(glint, "scale", Vector2(1.55, 1.55), 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(pt_light, "energy", 1.35, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.chain().tween_property(aura, "scale", Vector2(1.40, 1.40), 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(aura, "modulate:a", 0.55, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(glint, "scale", Vector2(0.95, 0.95), 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tw.tween_property(pt_light, "energy", 0.80, 0.9).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+
+	var rot_tw := create_tween().set_loops()
+	rot_tw.tween_property(glint, "rotation", TAU, 5.5)
+
+func _create_sparkle_glow_texture(size: int) -> ImageTexture:
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var center := Vector2(size * 0.5, size * 0.5)
+	var max_r := size * 0.5
+	for y in range(size):
+		for x in range(size):
+			var d := Vector2(x, y).distance_to(center) / max_r
+			var a := clampf(1.0 - d, 0.0, 1.0)
+			a = pow(a, 2.2)
+			var ring := exp(-pow((d - 0.52) / 0.14, 2.0)) * 0.45
+			var final_a := clampf(a * 0.78 + ring, 0.0, 1.0)
+			img.set_pixel(x, y, Color(1.0, 1.0, 1.0, final_a))
+	return ImageTexture.create_from_image(img)
+
+func _create_star_glint_texture(size: int) -> ImageTexture:
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var c := size * 0.5
+	for y in range(size):
+		for x in range(size):
+			var dx := absf(float(x) - c) / c
+			var dy := absf(float(y) - c) / c
+			var dist := sqrt(dx * dx + dy * dy)
+			if dist > 1.0:
+				img.set_pixel(x, y, Color(1, 1, 1, 0))
+				continue
+			var cross_1 := exp(-dx * 16.0) * exp(-dy * 2.6) + exp(-dy * 16.0) * exp(-dx * 2.6)
+			var diag_x := absf((float(x) - c) + (float(y) - c)) / (c * 1.414)
+			var diag_y := absf((float(x) - c) - (float(y) - c)) / (c * 1.414)
+			var cross_2 := (exp(-diag_x * 20.0) * exp(-diag_y * 3.8) + exp(-diag_y * 20.0) * exp(-diag_x * 3.8)) * 0.55
+			var radial_fade := clampf(1.0 - dist, 0.0, 1.0)
+			var alpha := clampf((cross_1 + cross_2) * radial_fade * 0.68, 0.0, 1.0)
+			img.set_pixel(x, y, Color(1.0, 1.0, 1.0, alpha))
+	return ImageTexture.create_from_image(img)
+
 func _process(_delta: float) -> void:
 	if _triggered:
 		return
@@ -38,29 +128,11 @@ func _process(_delta: float) -> void:
 		if _prompt_label:
 			_prompt_label.visible = false
 		var player := get_tree().get_first_node_in_group("player")
-		var is_p2 := false
-		if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") != null:
-			is_p2 = (GameManager.current_phase == 2)
-		if name == "PhaseTwoObjectiveNote":
-			is_p2 = true
-
-		if is_p2:
-			if get_node_or_null("/root/GameManager") and GameManager.has_method("unlock_phase_two_barrier"):
+		if get_node_or_null("/root/GameManager") and GameManager.get("current_phase") == 2:
+			if GameManager.has_method("unlock_phase_two_barrier"):
 				GameManager.unlock_phase_two_barrier()
-			var spawner := get_tree().get_first_node_in_group("labyrinth_props_spawner")
-			if spawner and spawner.has_method("unlock_phase_two_barrier"):
-				spawner.unlock_phase_two_barrier()
-			if player and player.has_method("_display_inner_thought"):
-				var is_genocide := false
-				if get_node_or_null("/root/GameManager"):
-					is_genocide = GameManager.get("is_genocide_route") or GameManager.get("kill_count") > 0
-				if is_genocide:
-					player._display_inner_thought("The barricade to the upper corridor gave way. Nothing stands between me and whatever is up there.", true, 4.8)
-				else:
-					player._display_inner_thought("Something shifted in the distance. The blocked passage to the upper right is open.", false, 4.8)
-		else:
-			if player and player.has_method("trigger_flashback_note_drain"):
-				player.trigger_flashback_note_drain()
+		if player and player.has_method("trigger_flashback_note_drain"):
+			player.trigger_flashback_note_drain()
 		visible = false
 		queue_free()
 
