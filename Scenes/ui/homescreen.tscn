@@ -115,9 +115,9 @@ text = "Artistas
 
 	Chris Ferreira \"chrisit0\"
 	Avril Paredes \"Avrillll\"
-	Andrea Albornoz \"HoneyJoo\"
+	Andrea Albornoz \"joograph_\"
 	Mariangel De Oliveira \"Lil kitty\"
-	Vanesa Martínez \"Vanesamb\"
+	Vanesa Martínez \"mikamv_art\"
 	Mariangel Gonzalez \"MAOGUI\"
 
 Programadores
@@ -131,7 +131,7 @@ Guionista
 	Kamilah Arasme \"kamilah\"
 
 Música y Sonido
-	Francisco Guevara \"Allrisk\""
+	Francisco Guevara \"adicius_\""
 
 [node name="Volver" type="Button" parent="PanelCreditos" unique_id=1593249179]
 layout_mode = 1
